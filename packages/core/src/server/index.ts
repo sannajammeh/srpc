@@ -5,7 +5,30 @@ import {
   SRPCError,
   StatusCodeMap,
 } from "../shared";
-import { createFlatProxy } from "../shared/proxy";
+import { createFlatProxy, createRecursiveProxy } from "../shared/proxy";
+
+type AnyObject = Record<string, any>;
+
+function traverseAndFindRoute(obj: Routes<unknown>, path: string) {
+  const keys = path.split(".");
+  let current: Routes<unknown> | ProcedureType<unknown> = obj;
+
+  for (const key of keys) {
+    if (
+      current &&
+      typeof current === "object" &&
+      current.__routes &&
+      key in current.__routes
+    ) {
+      current = (current.__routes as any)[key];
+    } else {
+      // Handle the case where the path is invalid
+      return null;
+    }
+  }
+
+  return current;
+}
 
 export type Routes<TContext> = {
   [key: string]: ProcedureType<TContext> | SRPC<TContext>;
@@ -59,15 +82,32 @@ class sRPC_API<TRouter extends AnySRPC, TRoutes = TRouter["__routes"]> {
 
   getRoute<T extends keyof TRoutes>(path: T) {
     const pathString = path.toString();
-    if (pathString.includes(".")) {
+
+    const value = (this.#router.__routes as any)[path] as TRoutes[T];
+
+    if (value) {
+      return value;
     }
+
+    if (pathString.includes(".")) {
+      let current: TRouter["__routes"] | null = this.#router.__routes;
+      const pathParts = pathString.split(".");
+
+      for (const key of pathParts) {
+        if (current && typeof current === "object" && key in current) {
+          current = (current as any)[key];
+        }
+        current = null;
+      }
+    }
+
     return (this.#router.__routes as any)[path] as TRoutes[T];
   }
 
   async call<T extends keyof TRoutes>(
     path: T,
     context: TRouter["__context"],
-    deserializedArgs: any[]
+    deserializedArgs: readonly any[]
   ) {
     const route = this.getRoute(path);
     if (typeof route !== "function") {
@@ -147,17 +187,19 @@ export const createSRPCCaller = <TRouter extends AnySRPC>({
   createContext?: () => Promise<TRouter["__context"]>;
   router: TRouter;
 }): DecoratedProcedureRecord<TRouter["__routes"]> => {
-  return createFlatProxy<DecoratedProcedureRecord<TRouter["__routes"]>>(
-    (path) => {
+  return createRecursiveProxy<DecoratedProcedureRecord<TRouter["__routes"]>>(
+    async ({ path, args }) => {
       const api = new sRPC_API({
         router,
       });
 
-      return async (...args: any[]) => {
-        const context = await createContext?.();
+      const context = await createContext?.();
 
-        return await api.call(path, context, args);
-      };
+      return api.call(
+        path.join(".") as keyof TRouter["__routes"],
+        context,
+        args
+      );
     }
   );
 };

@@ -5,12 +5,14 @@ import {
   Serializer,
   SRPCError,
 } from "../shared";
-import { createFlatProxy } from "../shared/proxy";
+import { createFlatProxy, createRecursiveProxy } from "../shared/proxy";
 export * from "../shared";
 
 export type SRPCClientOptions = {
   endpoint: string;
-  headers?: (op: { path: string }) => HeadersInit | Promise<HeadersInit>;
+  headers?: (op: {
+    path: readonly string[];
+  }) => HeadersInit | Promise<HeadersInit>;
   transformer?: Serializer;
 };
 
@@ -22,8 +24,8 @@ export const createSRPCClient = <
   headers: getHeaders,
   transformer = defaultSerializer,
 }: SRPCClientOptions): DecoratedProcedureRecord<TRoutes> => {
-  return createFlatProxy<DecoratedProcedureRecord<TRoutes>>((path) => {
-    return async (...args: any[]) => {
+  return createRecursiveProxy<DecoratedProcedureRecord<TRoutes>>(
+    async ({ path, args }) => {
       const headers = await getHeaders?.({ path: path });
       const response = await fetch(`${endpoint}/${path}`, {
         method: "POST",
@@ -46,6 +48,6 @@ export const createSRPCClient = <
       }
 
       return data;
-    };
-  });
+    }
+  );
 };

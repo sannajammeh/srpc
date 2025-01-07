@@ -1,6 +1,5 @@
 import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
 import ClientComponent from "./ClientComponent";
 import { Suspense } from "react";
 
@@ -22,7 +21,7 @@ const ThemeImage = (props: Props) => {
 
 export default async function Home() {
   return (
-    <div className={styles.page}>
+    <div>
       <Suspense>
         <ClientComponent />
       </Suspense>
