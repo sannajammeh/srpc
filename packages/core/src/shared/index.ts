@@ -1,4 +1,4 @@
-import { AnyProcedure, Routes } from "../server";
+import { AnyProcedure, AnySRPC, Routes } from "../server";
 
 export interface Serializer {
   serialize: (value: any) => any;
@@ -20,6 +20,17 @@ export type ErrorCodes =
   | "UNSUPPORTED_MEDIA_TYPE"
   | "GENERIC_ERROR";
 
+export const StatusCodeMap = {
+  BAD_REQUEST: 400,
+  NOT_FOUND: 404,
+  FORBIDDEN: 403,
+  UNAUTHORIZED: 401,
+  INTERNAL_SERVER_ERROR: 500,
+  NOT_IMPLEMENTED: 501,
+  UNSUPPORTED_MEDIA_TYPE: 415,
+  GENERIC_ERROR: 500,
+};
+
 export class SRPCError extends Error {
   constructor(
     message: string,
@@ -33,7 +44,7 @@ export class SRPCError extends Error {
 }
 
 export type InferProcedureInput<T extends AnyProcedure> = T extends (
-  _ctx,
+  _ctx: any,
   ...args: infer TArgs
 ) => any
   ? TArgs
@@ -48,3 +59,6 @@ export type DecoratedProcedureRecord<TRouter extends Routes<any>> = {
     ? ClientProcedure<TRouter[TKey]>
     : never;
 };
+
+export type InferRPCFromRouter<TRouter extends AnySRPC> =
+  DecoratedProcedureRecord<TRouter["__routes"]>;

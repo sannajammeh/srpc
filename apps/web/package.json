@@ -10,15 +10,25 @@
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
+  "imports": {
+    "#rpc": {
+      "types": "./rpc/rpc.d.ts",
+      "browser": "./rpc/rpc.client.ts",
+      "default": "./rpc/rpc.client.ts",
+      "react-server": "./rpc/rpc.server.ts"
+    }
+  },
   "dependencies": {
     "@repo/ui": "workspace:*",
     "next": "^15.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "seroval": "^1.1.1"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@srpc/core": "workspace:*",
     "@types/node": "^20",
     "@types/react": "18.3.1",
     "@types/react-dom": "18.3.0",

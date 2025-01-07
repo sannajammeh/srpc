@@ -6,6 +6,7 @@ import {
   SRPCError,
 } from "../shared";
 import { createFlatProxy } from "../shared/proxy";
+export * from "../shared";
 
 export type SRPCClientOptions = {
   endpoint: string;
@@ -21,13 +22,10 @@ export const createSRPCClient = <
   headers: getHeaders,
   transformer = defaultSerializer,
 }: SRPCClientOptions) => {
-  return createFlatProxy<DecoratedProcedureRecord<TRoutes>>(async (path) => {
-    const searchParams = new URLSearchParams();
-    searchParams.set("rpc-path", path);
-
+  return createFlatProxy<DecoratedProcedureRecord<TRoutes>>((path) => {
     return async (...args: any[]) => {
       const headers = await getHeaders?.({ path: path });
-      const response = await fetch(`${endpoint}?${searchParams.toString()}`, {
+      const response = await fetch(`${endpoint}/${path}`, {
         method: "POST",
         body: transformer.serialize(args),
         headers,

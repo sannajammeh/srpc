@@ -2,6 +2,8 @@ import {
   DecoratedProcedureRecord,
   defaultSerializer,
   Serializer,
+  SRPCError,
+  StatusCodeMap,
 } from "../shared";
 import { createFlatProxy } from "../shared/proxy";
 
@@ -19,7 +21,7 @@ export type AnyProcedure = ProcedureType<any>;
 export class SRPC<TContext, TRoutes extends Routes<TContext> = {}> {
   public __context!: TContext;
 
-  public __routes: TRoutes;
+  public __routes!: TRoutes;
 
   constructor(routes?: TRoutes) {
     if (routes) {
@@ -56,7 +58,7 @@ class sRPC_API<TRouter extends AnySRPC, TRoutes = TRouter["__routes"]> {
   }
 
   getRoute<T extends keyof TRoutes>(path: T) {
-    return this.#router.__routes[path as string] as TRoutes[T];
+    return (this.#router.__routes as any)[path] as TRoutes[T];
   }
 
   async call<T extends keyof TRoutes>(
@@ -66,7 +68,7 @@ class sRPC_API<TRouter extends AnySRPC, TRoutes = TRouter["__routes"]> {
   ) {
     const route = this.getRoute(path);
     if (typeof route !== "function") {
-      throw new Error(`Route ${String(path)} not found`);
+      throw new SRPCError(`Route ${String(path)} not found`, "NOT_FOUND");
     }
 
     return route(context, ...deserializedArgs);
@@ -79,7 +81,7 @@ export const srpcFetchApi = <TRouter extends AnySRPC>({
   createContext,
   transformer: serializer = defaultSerializer,
 }: sRPCOptions<TRouter> & {
-  createContext: (req: Request) => Promise<TRouter["__context"]>;
+  createContext?: (req: Request) => Promise<TRouter["__context"]>;
   transformer?: Serializer;
   endpoint: string;
 }) => {
@@ -89,17 +91,46 @@ export const srpcFetchApi = <TRouter extends AnySRPC>({
 
   return {
     fetch: async (req: Request) => {
-      const context = await createContext(req);
-      const path = req.url.replace(endpoint, "");
-      const body = await req.json();
+      const url = new URL(req.url);
+      const context = await createContext?.(req);
+      const path = url.pathname.replace(`${endpoint}/`, "");
+      const body = await req.text();
       const deserializedArgs = serializer.deserialize(body);
-      const data = await api.call(
-        path as keyof TRouter["__routes"],
-        context,
-        deserializedArgs
-      );
 
-      return Response.json(serializer.serialize(data));
+      try {
+        const data = await api.call(
+          path as keyof TRouter["__routes"],
+          context,
+          deserializedArgs
+        );
+
+        return new Response(serializer.serialize(data), {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      } catch (error) {
+        if (error instanceof SRPCError) {
+          return new Response(serializer.serialize(error), {
+            status: StatusCodeMap[error.code],
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+        }
+
+        const message = error instanceof Error ? error.message : String(error);
+
+        return new Response(
+          serializer.serialize(new SRPCError(message, "INTERNAL_SERVER_ERROR")),
+          {
+            status: 500,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
     },
   };
 };
@@ -108,7 +139,7 @@ export const createSRPCCaller = <TRouter extends AnySRPC>({
   createContext,
   router,
 }: {
-  createContext: () => Promise<TRouter["__context"]>;
+  createContext?: () => Promise<TRouter["__context"]>;
   router: TRouter;
 }) => {
   return createFlatProxy<DecoratedProcedureRecord<TRouter["__routes"]>>(
@@ -118,7 +149,7 @@ export const createSRPCCaller = <TRouter extends AnySRPC>({
       });
 
       return async (...args: any[]) => {
-        const context = await createContext();
+        const context = await createContext?.();
 
         return await api.call(path, context, args);
       };

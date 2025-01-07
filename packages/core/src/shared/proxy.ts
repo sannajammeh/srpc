@@ -12,7 +12,7 @@ export const createFlatProxy = <TFaux>(
 ): TFaux => {
   return new Proxy(noop, {
     get(_obj, name) {
-      if (typeof name !== "string" || name === "then") {
+      if (typeof name !== "string" || name === "then" || name === "prototype") {
         // special case for if the proxy is accidentally treated
         // like a PromiseLike (like in `Promise.resolve(proxy)`)
         return undefined;
