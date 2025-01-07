@@ -1,4 +1,4 @@
-import { AnyProcedure, AnySRPC, Routes } from "../server";
+import { AnyProcedure, AnySRPC, Routes, SRPC } from "../server";
 
 export interface Serializer {
   serialize: (value: any) => any;
@@ -57,7 +57,9 @@ export type ClientProcedure<T extends AnyProcedure> = (
 export type DecoratedProcedureRecord<TRouter extends Routes<any>> = {
   [TKey in keyof TRouter]: TRouter[TKey] extends AnyProcedure
     ? ClientProcedure<TRouter[TKey]>
-    : never;
+    : TRouter[TKey] extends SRPC<any>
+      ? DecoratedProcedureRecord<TRouter[TKey]["__routes"]>
+      : never;
 };
 
 export type InferRPCFromRouter<TRouter extends AnySRPC> =

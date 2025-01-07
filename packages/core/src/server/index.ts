@@ -8,7 +8,7 @@ import {
 import { createFlatProxy } from "../shared/proxy";
 
 export type Routes<TContext> = {
-  [key: string]: ProcedureType<TContext>;
+  [key: string]: ProcedureType<TContext> | SRPC<TContext>;
 };
 
 export type ProcedureType<TContext> = (
@@ -29,16 +29,16 @@ export class SRPC<TContext, TRoutes extends Routes<TContext> = {}> {
     }
   }
 
-  context<T>() {
+  context<T>(): SRPC<T> {
     return new SRPC<T>();
   }
 
-  router<T extends Routes<TContext>>(routes: T) {
+  router<T extends Routes<TContext>>(routes: T): SRPC<TContext, T> {
     return new SRPC<TContext, T>(routes);
   }
 }
 
-export const initSRPC = () => {
+export const initSRPC = (): SRPC<unknown> => {
   return new SRPC();
 };
 
@@ -58,6 +58,9 @@ class sRPC_API<TRouter extends AnySRPC, TRoutes = TRouter["__routes"]> {
   }
 
   getRoute<T extends keyof TRoutes>(path: T) {
+    const pathString = path.toString();
+    if (pathString.includes(".")) {
+    }
     return (this.#router.__routes as any)[path] as TRoutes[T];
   }
 
@@ -84,7 +87,9 @@ export const srpcFetchApi = <TRouter extends AnySRPC>({
   createContext?: (req: Request) => Promise<TRouter["__context"]>;
   transformer?: Serializer;
   endpoint: string;
-}) => {
+}): {
+  fetch: (req: Request) => Promise<Response>;
+} => {
   const api = new sRPC_API({
     router,
   });
@@ -141,7 +146,7 @@ export const createSRPCCaller = <TRouter extends AnySRPC>({
 }: {
   createContext?: () => Promise<TRouter["__context"]>;
   router: TRouter;
-}) => {
+}): DecoratedProcedureRecord<TRouter["__routes"]> => {
   return createFlatProxy<DecoratedProcedureRecord<TRouter["__routes"]>>(
     (path) => {
       const api = new sRPC_API({

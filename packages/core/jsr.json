@@ -1,0 +1,11 @@
+{
+  "name": "@srpc/core",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "A simple RPC framework",
+  "exports": {
+    ".": "./src/mod.ts",
+    "./client": "./src/client/index.ts",
+    "./server": "./src/server/index.ts"
+  }
+}

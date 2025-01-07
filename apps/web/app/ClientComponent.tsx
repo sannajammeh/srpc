@@ -6,7 +6,7 @@ const ClientComponent = () => {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    rpc.getUser(1).then(setUser);
+    rpc.getUser(1, "did").then(setUser);
   }, []);
   return (
     <div>

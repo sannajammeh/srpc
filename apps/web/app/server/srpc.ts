@@ -2,14 +2,25 @@ import { initSRPC } from "@srpc/core/server";
 
 export const s = initSRPC();
 
+const postsRouter = s.router({
+  getPost: async (_, id: number) => {
+    const json = await fetch(
+      `https://jsonplaceholder.typicode.com/posts/${id}`
+    ).then((r) => r.json());
+
+    return json as { title: string; body: string };
+  },
+});
+
 export const appRouter = s.router({
-  getUser: async (_, userId: number) => {
+  getUser: async (_, userId: number, name: "did") => {
     const json = await fetch(
       `https://jsonplaceholder.typicode.com/users/${userId}`
     ).then((r) => r.json());
 
     return json as User;
   },
+  posts: postsRouter,
 });
 
 export type AppRouter = typeof appRouter;

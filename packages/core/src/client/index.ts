@@ -21,7 +21,7 @@ export const createSRPCClient = <
   endpoint,
   headers: getHeaders,
   transformer = defaultSerializer,
-}: SRPCClientOptions) => {
+}: SRPCClientOptions): DecoratedProcedureRecord<TRoutes> => {
   return createFlatProxy<DecoratedProcedureRecord<TRoutes>>((path) => {
     return async (...args: any[]) => {
       const headers = await getHeaders?.({ path: path });
