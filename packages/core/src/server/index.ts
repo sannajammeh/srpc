@@ -5,30 +5,7 @@ import {
   SRPCError,
   StatusCodeMap,
 } from "../shared";
-import { createFlatProxy, createRecursiveProxy } from "../shared/proxy";
-
-type AnyObject = Record<string, any>;
-
-function traverseAndFindRoute(obj: Routes<unknown>, path: string) {
-  const keys = path.split(".");
-  let current: Routes<unknown> | ProcedureType<unknown> = obj;
-
-  for (const key of keys) {
-    if (
-      current &&
-      typeof current === "object" &&
-      current.__routes &&
-      key in current.__routes
-    ) {
-      current = (current.__routes as any)[key];
-    } else {
-      // Handle the case where the path is invalid
-      return null;
-    }
-  }
-
-  return current;
-}
+import { createRecursiveProxy } from "../shared/proxy";
 
 export type Routes<TContext> = {
   [key: string]: ProcedureType<TContext> | SRPC<TContext>;
@@ -90,15 +67,22 @@ class sRPC_API<TRouter extends AnySRPC, TRoutes = TRouter["__routes"]> {
     }
 
     if (pathString.includes(".")) {
-      let current: TRouter["__routes"] | null = this.#router.__routes;
+      let current: TRouter["__routes"] | SRPC<any> | null =
+        this.#router.__routes;
       const pathParts = pathString.split(".");
 
       for (const key of pathParts) {
-        if (current && typeof current === "object" && key in current) {
+        if (current && current instanceof SRPC) {
+          current = (current.__routes as any)[key];
+          continue;
+        } else if (current && typeof current === "object" && key in current) {
           current = (current as any)[key];
+        } else {
+          current = null;
         }
-        current = null;
       }
+
+      return current;
     }
 
     return (this.#router.__routes as any)[path] as TRoutes[T];
@@ -114,7 +98,7 @@ class sRPC_API<TRouter extends AnySRPC, TRoutes = TRouter["__routes"]> {
       throw new SRPCError(`Route ${String(path)} not found`, "NOT_FOUND");
     }
 
-    return route(context, ...deserializedArgs);
+    return (route as Function)(context, ...deserializedArgs);
   }
 }
 

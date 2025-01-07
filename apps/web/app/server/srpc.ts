@@ -12,6 +12,16 @@ const postsRouter = s.router({
   },
 });
 
+const userRouter = s.router({
+  getUser: async (_, id: number) => {
+    const json = await fetch(
+      `https://jsonplaceholder.typicode.com/users/${id}`
+    ).then((r) => r.json());
+
+    return json as User;
+  },
+});
+
 export const appRouter = s.router({
   getUser: async (_, userId: number, name: "did") => {
     const json = await fetch(
@@ -21,6 +31,7 @@ export const appRouter = s.router({
     return json as User;
   },
   posts: postsRouter,
+  users: userRouter,
 });
 
 export type AppRouter = typeof appRouter;

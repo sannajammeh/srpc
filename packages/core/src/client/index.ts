@@ -27,7 +27,7 @@ export const createSRPCClient = <
   return createRecursiveProxy<DecoratedProcedureRecord<TRoutes>>(
     async ({ path, args }) => {
       const headers = await getHeaders?.({ path: path });
-      const response = await fetch(`${endpoint}/${path}`, {
+      const response = await fetch(`${endpoint}/${path.join(".")}`, {
         method: "POST",
         body: transformer.serialize(args),
         headers,
