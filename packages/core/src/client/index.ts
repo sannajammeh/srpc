@@ -1,4 +1,5 @@
 import { type AnySRPC } from "../server";
+import type { Routes } from "../server/api";
 import {
   type DecoratedProcedureRecord,
   type Serializer,
@@ -6,7 +7,6 @@ import {
   SRPCError,
 } from "../shared";
 import { createRecursiveProxy } from "../shared/proxy";
-import type { Routes } from "../shared/types";
 export * from "../shared";
 
 export type SRPCClientOptions = {

@@ -1,5 +1,9 @@
 import { SRPCError } from "../shared";
-import type { Routes } from "../shared/types";
+import type { ProcedureType } from "../shared/types";
+
+export type Routes<TContext> = {
+  [key: string]: ProcedureType<TContext> | SRPC<TContext>;
+};
 
 export type AnySRPC = SRPC<any>;
 

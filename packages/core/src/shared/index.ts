@@ -1,5 +1,6 @@
-import { SRPC } from "../server";
-import type { AnyProcedure, AnySRPC, Routes } from "./types";
+import { SRPC, type AnySRPC } from "../server";
+import type { Routes } from "../server/api";
+import type { AnyProcedure } from "./types";
 
 export interface Serializer {
   serialize: (value: any) => any;
