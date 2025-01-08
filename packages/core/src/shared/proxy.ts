@@ -1,3 +1,7 @@
+/**
+ * Used from trpc.io
+ */
+
 interface ProxyCallbackOptions {
   path: readonly string[];
   args: readonly unknown[];

@@ -2,6 +2,10 @@
   "name": "@srpc/core",
   "version": "1.0.0",
   "description": "",
+  "scripts": {
+    "test": "vitest run",
+    "test:dev": "vitest"
+  },
   "exports": {
     ".": {
       "types": "./src/index.ts",
@@ -18,5 +22,9 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "get-port-please": "^3.1.2",
+    "vitest": "^2.1.8"
+  }
 }

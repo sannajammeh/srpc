@@ -1,11 +1,12 @@
-import { AnySRPC, Routes } from "../server";
+import { type AnySRPC } from "../server";
 import {
-  DecoratedProcedureRecord,
+  type DecoratedProcedureRecord,
+  type Serializer,
   defaultSerializer,
-  Serializer,
   SRPCError,
 } from "../shared";
-import { createFlatProxy, createRecursiveProxy } from "../shared/proxy";
+import { createRecursiveProxy } from "../shared/proxy";
+import type { Routes } from "../shared/types";
 export * from "../shared";
 
 export type SRPCClientOptions = {
@@ -14,6 +15,7 @@ export type SRPCClientOptions = {
     path: readonly string[];
   }) => HeadersInit | Promise<HeadersInit>;
   transformer?: Serializer;
+  fetch?: typeof fetch;
 };
 
 export const createSRPCClient = <
@@ -23,6 +25,7 @@ export const createSRPCClient = <
   endpoint,
   headers: getHeaders,
   transformer = defaultSerializer,
+  fetch = globalThis.fetch,
 }: SRPCClientOptions): DecoratedProcedureRecord<TRoutes> => {
   return createRecursiveProxy<DecoratedProcedureRecord<TRoutes>>(
     async ({ path, args }) => {
