@@ -49,6 +49,14 @@ function createInnerProxy(
           args: args.length >= 2 ? args[1] : [],
           path: path.slice(0, -1),
         };
+      } else if (lastOfPath === "toString") {
+        return path.slice(0, -1).join(".");
+      } else if (lastOfPath === "toJSON") {
+        return {
+          path: path.slice(0, -1),
+          pathString: path.slice(0, -1).join("."),
+          __type: "SRPC",
+        };
       }
       freezeIfAvailable(opts.args);
       freezeIfAvailable(opts.path);
