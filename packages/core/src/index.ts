@@ -1,6 +1,6 @@
 export {
   type ErrorCodes,
   SRPCError,
-  type InferRouterInputs as RouterInputs,
-  type InferRouterOutputs as RouterOutputs,
+  type InferRouterInputs,
+  type InferRouterOutputs,
 } from "./shared";
