@@ -9,11 +9,11 @@ suite("SRPC", () => {
       expect(sut).toBeInstanceOf(SRPC);
     });
 
-    it("Should contain __context and __routes properties", () => {
+    it("Should contain __context and ipc properties", () => {
       const sut = new SRPC({});
 
       expect("__context" in sut).toBeFalsy();
-      expect("__routes" in sut).toBeTruthy();
+      expect("ipc" in sut).toBeTruthy();
     });
 
     it("Should recreate itself when context is set", () => {

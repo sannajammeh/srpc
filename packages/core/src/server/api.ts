@@ -14,11 +14,11 @@ export type SrpcBaseOptions<TRouter extends AnySRPC> = {
 export class SRPC<TContext, TRoutes extends Routes<TContext> = {}> {
   public __context!: TContext;
 
-  public __routes!: TRoutes;
+  public ipc!: TRoutes;
 
   constructor(routes?: TRoutes) {
     if (routes) {
-      this.__routes = routes;
+      this.ipc = routes;
     }
   }
 
@@ -35,7 +35,7 @@ export const initSRPC = (): SRPC<unknown> => {
   return new SRPC();
 };
 
-export class sRPC_API<TRouter extends AnySRPC, TRoutes = TRouter["__routes"]> {
+export class sRPC_API<TRouter extends AnySRPC, TRoutes = TRouter["ipc"]> {
   #router: TRouter;
   #options: SrpcBaseOptions<TRouter>;
 
@@ -47,20 +47,19 @@ export class sRPC_API<TRouter extends AnySRPC, TRoutes = TRouter["__routes"]> {
   getRoute<T extends keyof TRoutes>(path: T) {
     const pathString = path.toString();
 
-    const value = (this.#router.__routes as any)[path] as TRoutes[T];
+    const value = (this.#router.ipc as any)[path] as TRoutes[T];
 
     if (value) {
       return value;
     }
 
     if (pathString.includes(".")) {
-      let current: TRouter["__routes"] | SRPC<any> | null =
-        this.#router.__routes;
+      let current: TRouter["ipc"] | SRPC<any> | null = this.#router.ipc;
       const pathParts = pathString.split(".");
 
       for (const key of pathParts) {
         if (current && current instanceof SRPC) {
-          current = (current.__routes as any)[key];
+          current = (current.ipc as any)[key];
           continue;
         } else if (current && typeof current === "object" && key in current) {
           current = (current as any)[key];
@@ -72,7 +71,7 @@ export class sRPC_API<TRouter extends AnySRPC, TRoutes = TRouter["__routes"]> {
       return current;
     }
 
-    return (this.#router.__routes as any)[path] as TRoutes[T];
+    return (this.#router.ipc as any)[path] as TRoutes[T];
   }
 
   async call<T extends keyof TRoutes>(

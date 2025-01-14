@@ -60,31 +60,31 @@ export type DecoratedProcedureRecord<TRouter extends Routes<any>> = {
   [TKey in keyof TRouter]: TRouter[TKey] extends AnyProcedure
     ? ClientProcedure<TRouter[TKey]>
     : TRouter[TKey] extends SRPC<any>
-      ? DecoratedProcedureRecord<TRouter[TKey]["__routes"]>
+      ? DecoratedProcedureRecord<TRouter[TKey]["ipc"]>
       : never;
 };
 
 export type InferRPCFromRouter<TRouter extends AnySRPC> =
-  DecoratedProcedureRecord<TRouter["__routes"]>;
+  DecoratedProcedureRecord<TRouter["ipc"]>;
 
 export type DecoratedProcedureOutputs<TRouter extends Routes<any>> = {
   [TKey in keyof TRouter]: TRouter[TKey] extends AnyProcedure
     ? Awaited<ReturnType<TRouter[TKey]>>
     : TRouter[TKey] extends SRPC<any>
-      ? DecoratedProcedureOutputs<TRouter[TKey]["__routes"]>
+      ? DecoratedProcedureOutputs<TRouter[TKey]["ipc"]>
       : never;
 };
 
 export type InferRouterOutputs<TRouter extends AnySRPC> =
-  DecoratedProcedureOutputs<TRouter["__routes"]>;
+  DecoratedProcedureOutputs<TRouter["ipc"]>;
 
 export type DecoratedProcedureInputs<TRouter extends Routes<any>> = {
   [TKey in keyof TRouter]: TRouter[TKey] extends AnyProcedure
     ? InferProcedureInput<TRouter[TKey]>
     : TRouter[TKey] extends SRPC<any>
-      ? DecoratedProcedureInputs<TRouter[TKey]["__routes"]>
+      ? DecoratedProcedureInputs<TRouter[TKey]["ipc"]>
       : never;
 };
 
 export type InferRouterInputs<TRouter extends AnySRPC> =
-  DecoratedProcedureInputs<TRouter["__routes"]>;
+  DecoratedProcedureInputs<TRouter["ipc"]>;

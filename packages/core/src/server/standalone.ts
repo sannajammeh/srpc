@@ -51,7 +51,7 @@ export const createSrpcServer = <TRouter extends AnySRPC>({
 
     try {
       const data = await api.call(
-        path as keyof TRouter["__routes"],
+        path as keyof TRouter["ipc"],
         context,
         deserializedArgs
       );

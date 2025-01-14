@@ -23,8 +23,8 @@ export const createSRPCCaller = <TRouter extends AnySRPC>({
 }: {
   createContext?: () => Promise<TRouter["__context"]>;
   router: TRouter;
-}): DecoratedProcedureRecord<TRouter["__routes"]> => {
-  return createRecursiveProxy<DecoratedProcedureRecord<TRouter["__routes"]>>(
+}): DecoratedProcedureRecord<TRouter["ipc"]> => {
+  return createRecursiveProxy<DecoratedProcedureRecord<TRouter["ipc"]>>(
     async ({ path, args }) => {
       const api = new sRPC_API({
         router,
@@ -32,11 +32,7 @@ export const createSRPCCaller = <TRouter extends AnySRPC>({
 
       const context = await createContext?.();
 
-      return api.call(
-        path.join(".") as keyof TRouter["__routes"],
-        context,
-        args
-      );
+      return api.call(path.join(".") as keyof TRouter["ipc"], context, args);
     }
   );
 };

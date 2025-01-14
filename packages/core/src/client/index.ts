@@ -20,7 +20,7 @@ export type SRPCClientOptions = {
 
 export const createSRPCClient = <
   TRouter extends AnySRPC,
-  TRoutes extends Routes<any> = TRouter["__routes"],
+  TRoutes extends Routes<any> = TRouter["ipc"],
 >({
   endpoint,
   headers: getHeaders,
