@@ -55,6 +55,8 @@ export const srpcFetchApi = <TRouter extends AnySRPC>({
 
         const message = error instanceof Error ? error.message : String(error);
 
+        console.error(error);
+
         return new Response(
           serializer.serialize(new SRPCError(message, "INTERNAL_SERVER_ERROR")),
           {
