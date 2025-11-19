@@ -6,7 +6,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "release": "turbo run release:npm release:jsr --filter=./packages/**"
+    "release": "turbo run release:npm release:jsr --filter=./packages/**",
+    "release:npm": "turbo run release:npm --filter=./packages/**"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
