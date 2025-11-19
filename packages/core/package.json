@@ -1,5 +1,5 @@
 {
-  "name": "@srpc/core",
+  "name": "@srpc.org/core",
   "version": "0.20.1",
   "description": "A lightweight, type-safe RPC framework for TypeScript",
   "type": "module",

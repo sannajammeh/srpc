@@ -1,5 +1,5 @@
 {
-  "name": "@srpc/react-query",
+  "name": "@srpc.org/react-query",
   "version": "0.20.1",
   "description": "React Query integration for SRPC - Type-safe RPC with automatic React Query hooks",
   "type": "module",
