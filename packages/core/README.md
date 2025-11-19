@@ -1,4 +1,4 @@
-# @srpc/core
+# @srpc.org/core
 
 A lightweight, type-safe RPC framework for TypeScript with automatic type inference, multiple runtime support, and zero dependencies.
 
@@ -6,11 +6,11 @@ A lightweight, type-safe RPC framework for TypeScript with automatic type infere
 
 ```bash
 # Using JSR (recommended)
-deno add @srpc/core
-npx jsr add @srpc/core
-yarn dlx jsr add @srpc/core
-pnpm dlx jsr add @srpc/core
-bunx jsr add @srpc/core
+deno add @srpc.org/core
+npx jsr add @srpc.org/core
+yarn dlx jsr add @srpc.org/core
+pnpm dlx jsr add @srpc.org/core
+bunx jsr add @srpc.org/core
 ```
 
 ## Features
@@ -30,7 +30,7 @@ bunx jsr add @srpc/core
 #### Using Fetch API (Recommended for Edge Runtimes)
 
 ```typescript
-import { initSRPC, srpcFetchApi } from "@srpc/core/server";
+import { initSRPC, srpcFetchApi } from "@srpc.org/core/server";
 
 // Initialize SRPC
 const s = initSRPC();
@@ -63,8 +63,8 @@ export default {
 #### Using Node.js HTTP Server
 
 ```typescript
-import { initSRPC } from "@srpc/core/server";
-import { createSrpcServer } from "@srpc/core/server";
+import { initSRPC } from "@srpc.org/core/server";
+import { createSrpcServer } from "@srpc.org/core/server";
 
 const s = initSRPC();
 
@@ -90,7 +90,7 @@ server.listen(3000, () => {
 ### Client Setup
 
 ```typescript
-import { createSRPCClient } from "@srpc/core/client";
+import { createSRPCClient } from "@srpc.org/core/client";
 import type { AppRouter } from "./server";
 
 // Create type-safe client
@@ -110,7 +110,7 @@ const user = await client.getUser(1); // Type: { id: number, name: string, email
 Organize your procedures into logical groups:
 
 ```typescript
-import { initSRPC } from "@srpc/core/server";
+import { initSRPC } from "@srpc.org/core/server";
 
 const s = initSRPC();
 
@@ -151,7 +151,7 @@ const appRouter = s.router({
 Add context (authentication, database connections, etc.) to your procedures:
 
 ```typescript
-import { initSRPC, srpcFetchApi } from "@srpc/core/server";
+import { initSRPC, srpcFetchApi } from "@srpc.org/core/server";
 
 // Define your context type
 type Context = {
@@ -189,7 +189,7 @@ const { fetch: handleRequest } = srpcFetchApi({
 Use `SRPCError` for proper HTTP status code mapping:
 
 ```typescript
-import { initSRPC } from "@srpc/core/server";
+import { initSRPC } from "@srpc.org/core/server";
 import { SRPCError } from "@srpc.org/core";
 
 const s = initSRPC();
@@ -227,8 +227,8 @@ try {
 Use custom serializers for complex data types:
 
 ```typescript
-import { createSRPCClient } from "@srpc/core/client";
-import type { Serializer } from "@srpc/core/shared";
+import { createSRPCClient } from "@srpc.org/core/client";
+import type { Serializer } from "@srpc.org/core/shared";
 
 // Example: Using superjson for Date, Map, Set support
 import superjson from "superjson";
@@ -273,7 +273,7 @@ type GetUserOutput = RouterOutputs["getUser"]; // { id: number, name: string, em
 Call procedures directly on the server without HTTP:
 
 ```typescript
-import { createSRPCCaller } from "@srpc/core/server";
+import { createSRPCCaller } from "@srpc.org/core/server";
 import { appRouter } from "./router";
 
 const caller = createSRPCCaller({

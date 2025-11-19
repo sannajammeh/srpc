@@ -10,7 +10,7 @@
  *
  * @example
  * ```typescript
- * import { initSRPC, srpcFetchApi } from "@srpc/core/server";
+ * import { initSRPC, srpcFetchApi } from "@srpc.org/core/server";
  *
  * // Initialize and create router
  * const s = initSRPC();
@@ -48,7 +48,7 @@ import { srpcFetchApi } from "./fetch";
  *
  * @example
  * ```typescript
- * import { initSRPC } from "@srpc/core/server";
+ * import { initSRPC } from "@srpc.org/core/server";
  *
  * type Context = { user?: { id: number } };
  *
@@ -73,7 +73,7 @@ export { SRPC };
  *
  * @example Basic usage
  * ```typescript
- * import { initSRPC } from "@srpc/core/server";
+ * import { initSRPC } from "@srpc.org/core/server";
  *
  * const s = initSRPC();
  *
@@ -144,7 +144,7 @@ export { initSRPC };
  *
  * @example Basic Fetch API usage
  * ```typescript
- * import { initSRPC, srpcFetchApi } from "@srpc/core/server";
+ * import { initSRPC, srpcFetchApi } from "@srpc.org/core/server";
  *
  * const s = initSRPC();
  * const appRouter = s.router({
@@ -228,7 +228,7 @@ export { type AnySRPC };
  *
  * @example Basic usage
  * ```typescript
- * import { createSRPCCaller, initSRPC } from "@srpc/core/server";
+ * import { createSRPCCaller, initSRPC } from "@srpc.org/core/server";
  *
  * const s = initSRPC();
  * const appRouter = s.router({

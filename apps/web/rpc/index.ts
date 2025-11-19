@@ -1,4 +1,4 @@
-import { InferRPCFromRouter } from "@srpc/core/client";
+import { InferRPCFromRouter } from "@srpc.org/core/client";
 import { AppRouter } from "../app/server/srpc";
 
 let rpc: InferRPCFromRouter<AppRouter>;

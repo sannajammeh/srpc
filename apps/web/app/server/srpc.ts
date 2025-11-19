@@ -1,4 +1,4 @@
-import { initSRPC } from "@srpc/core/server";
+import { initSRPC } from "@srpc.org/core/server";
 
 export const s = initSRPC();
 

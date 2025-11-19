@@ -25,7 +25,7 @@ bunx jsr add @srpc/react-query
 ## Prerequisites
 
 This package requires:
-- `@srpc/core` - The core SRPC framework
+- `@srpc.org/core` - The core SRPC framework
 - `@tanstack/react-query` v5.90 or higher
 - `react` v19 or higher
 
@@ -35,7 +35,7 @@ This package requires:
 
 ```typescript
 // server/router.ts
-import { initSRPC } from "@srpc/core/server";
+import { initSRPC } from "@srpc.org/core/server";
 
 const s = initSRPC();
 
@@ -60,7 +60,7 @@ export type AppRouter = typeof appRouter;
 
 ```typescript
 // lib/rpc.ts
-import { createSRPCClient } from "@srpc/core/client";
+import { createSRPCClient } from "@srpc.org/core/client";
 import { createSRPCContext } from "@srpc.org/react-query";
 import type { AppRouter } from "../server/router";
 
@@ -229,7 +229,7 @@ const postQuery = useQuery(srpc.posts.drafts.list.queryOptions());
 If you prefer not to use React Context:
 
 ```typescript
-import { createSRPCClient } from "@srpc/core/client";
+import { createSRPCClient } from "@srpc.org/core/client";
 import { createSRPCQueryOptions } from "@srpc.org/react-query";
 import { useQuery } from "@tanstack/react-query";
 import type { AppRouter } from "./server/router";
@@ -254,7 +254,7 @@ function MyComponent() {
 ### Custom Serialization
 
 ```typescript
-import { createSRPCClient } from "@srpc/core/client";
+import { createSRPCClient } from "@srpc.org/core/client";
 import { createSRPCContext } from "@srpc.org/react-query";
 import superjson from "superjson";
 

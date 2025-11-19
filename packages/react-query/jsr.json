@@ -9,8 +9,8 @@
     "./context": "./src/context.tsx"
   },
   "imports": {
-    "@srpc/core/server": "jsr:@srpc/core@^0.20.0/server",
-    "@srpc/core/shared": "jsr:@srpc/core@^0.20.0/shared",
-    "@srpc.org/core": "jsr:@srpc/core@^0.20.0"
+    "@srpc.org/core/server": "jsr:@srpc.org/core@^0.20.0/server",
+    "@srpc.org/core/shared": "jsr:@srpc.org/core@^0.20.0/shared",
+    "@srpc.org/core": "jsr:@srpc.org/core@^0.20.0"
   }
 }

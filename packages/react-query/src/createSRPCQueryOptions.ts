@@ -9,7 +9,7 @@
  *
  * @example Basic usage
  * ```typescript
- * import { createSRPCClient } from "@srpc/core/client";
+ * import { createSRPCClient } from "@srpc.org/core/client";
  * import { createSRPCQueryOptions } from "@srpc.org/react-query";
  * import { useQuery } from "@tanstack/react-query";
  * import type { AppRouter } from "./server";
@@ -54,14 +54,14 @@
  */
 
 /** biome-ignore-all lint/suspicious/noExplicitAny: <Allow any type cast> */
-import type { AnySRPC, SRPC } from "@srpc/core/server";
+import type { AnySRPC, SRPC } from "@srpc.org/core/server";
 import {
   createRecursiveProxy,
   type AnyProcedure,
   type AnyRoutes,
   type ClientProcedure,
   type DecoratedProcedureRecord,
-} from "@srpc/core/shared";
+} from "@srpc.org/core/shared";
 import {
   mutationOptions,
   queryOptions,
@@ -165,7 +165,7 @@ export type DecoratedQueryProcedureRecord<TRouter extends AnyRoutes> = {
  *
  * @example Basic usage
  * ```typescript
- * import { createSRPCClient } from "@srpc/core/client";
+ * import { createSRPCClient } from "@srpc.org/core/client";
  * import { createSRPCQueryOptions } from "@srpc.org/react-query";
  * import { useQuery, useMutation } from "@tanstack/react-query";
  * import type { AppRouter } from "./server";

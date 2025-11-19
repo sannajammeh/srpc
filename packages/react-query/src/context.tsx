@@ -9,7 +9,7 @@
  *
  * @example Complete setup
  * ```typescript
- * import { createSRPCClient } from "@srpc/core/client";
+ * import { createSRPCClient } from "@srpc.org/core/client";
  * import { createSRPCContext } from "@srpc/react-query/context";
  * import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
  * import type { AppRouter } from "./server";
@@ -45,8 +45,8 @@
 
 "use client";
 
-import type { AnySRPC } from "@srpc/core/server";
-import type { DecoratedProcedureRecord } from "@srpc/core/shared";
+import type { AnySRPC } from "@srpc.org/core/server";
+import type { DecoratedProcedureRecord } from "@srpc.org/core/shared";
 import React, {
   createContext,
   useContext,
@@ -131,7 +131,7 @@ export type SRPCContextFactory<TRouter extends AnySRPC> = {
  *
  * @example Basic setup
  * ```typescript
- * import { createSRPCClient } from "@srpc/core/client";
+ * import { createSRPCClient } from "@srpc.org/core/client";
  * import { createSRPCContext } from "@srpc.org/react-query";
  * import type { AppRouter } from "./server";
  *

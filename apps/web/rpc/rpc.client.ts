@@ -1,4 +1,4 @@
-import { createSRPCClient } from "@srpc/core/client";
+import { createSRPCClient } from "@srpc.org/core/client";
 import type { AppRouter } from "../app/server/srpc";
 import * as transformer from "seroval";
 import { createSRPCContext } from "@srpc.org/react-query";

@@ -5,9 +5,9 @@
  *
  * This is the main entrypoint that exports commonly used types and utilities.
  * For more specific functionality, import from the appropriate submodules:
- * - `@srpc/core/server` for server-side router and adapter creation
- * - `@srpc/core/client` for client-side RPC calls
- * - `@srpc/core/shared` for shared utilities and advanced types
+ * - `@srpc.org/core/server` for server-side router and adapter creation
+ * - `@srpc.org/core/client` for client-side RPC calls
+ * - `@srpc.org/core/shared` for shared utilities and advanced types
  *
  * @example
  * ```typescript

@@ -11,7 +11,7 @@
  *
  * @example
  * ```typescript
- * import { SRPCError, type InferRouterInputs, type InferRouterOutputs } from "@srpc/core/shared";
+ * import { SRPCError, type InferRouterInputs, type InferRouterOutputs } from "@srpc.org/core/shared";
  *
  * // Throw typed errors
  * throw new SRPCError("Not found", "NOT_FOUND");
@@ -36,7 +36,7 @@ import { createFlatProxy, createRecursiveProxy } from "./proxy";
  * @example Using superjson for Date, Map, Set support
  * ```typescript
  * import superjson from "superjson";
- * import type { Serializer } from "@srpc/core/shared";
+ * import type { Serializer } from "@srpc.org/core/shared";
  *
  * const customSerializer: Serializer = {
  *   serialize: (value) => superjson.stringify(value),
@@ -189,7 +189,7 @@ export class SRPCError extends Error {
  *
  * @example
  * ```typescript
- * import type { InferProcedureInput } from "@srpc/core/shared";
+ * import type { InferProcedureInput } from "@srpc.org/core/shared";
  *
  * type GetUserProcedure = (ctx: Context, id: number) => Promise<User>;
  * type GetUserInput = InferProcedureInput<GetUserProcedure>; // [id: number]
@@ -214,7 +214,7 @@ export type InferProcedureInput<T extends AnyProcedure> = T extends (
  *
  * @example
  * ```typescript
- * import type { ClientProcedure } from "@srpc/core/shared";
+ * import type { ClientProcedure } from "@srpc.org/core/shared";
  *
  * // Server procedure
  * type ServerProc = (ctx: Context, id: number) => Promise<User>;
@@ -237,7 +237,7 @@ export type ClientProcedure<T extends AnyProcedure> = (
  *
  * @example
  * ```typescript
- * import type { DecoratedProcedureRecord } from "@srpc/core/shared";
+ * import type { DecoratedProcedureRecord } from "@srpc.org/core/shared";
  *
  * // Server router
  * const appRouter = s.router({
@@ -289,7 +289,7 @@ export type InferRPCFromRouter<TRouter extends AnySRPC> =
  *
  * @example
  * ```typescript
- * import type { DecoratedProcedureOutputs } from "@srpc/core/shared";
+ * import type { DecoratedProcedureOutputs } from "@srpc.org/core/shared";
  *
  * const appRouter = s.router({
  *   getUser: async (ctx, id: number) => ({ id, name: "John" }),
@@ -349,7 +349,7 @@ export type InferRouterOutputs<TRouter extends AnySRPC> =
  *
  * @example
  * ```typescript
- * import type { DecoratedProcedureInputs } from "@srpc/core/shared";
+ * import type { DecoratedProcedureInputs } from "@srpc.org/core/shared";
  *
  * const appRouter = s.router({
  *   getUser: async (ctx, id: number) => ({ id, name: "John" }),
@@ -446,7 +446,7 @@ export { createFlatProxy };
  *
  * @example Internal usage (not typically used directly)
  * ```typescript
- * import { createRecursiveProxy } from "@srpc/core/shared";
+ * import { createRecursiveProxy } from "@srpc.org/core/shared";
  *
  * const proxy = createRecursiveProxy(({ path, args }) => {
  *   console.log("Path:", path); // ["users", "admin", "createUser"]

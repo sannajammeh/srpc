@@ -1,4 +1,4 @@
-import { srpcFetchApi } from "@srpc/core/server";
+import { srpcFetchApi } from "@srpc.org/core/server";
 import { appRouter } from "../../../server/srpc";
 import * as transformer from "seroval";
 

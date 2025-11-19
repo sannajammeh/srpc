@@ -8,7 +8,7 @@
  *
  * @example
  * ```typescript
- * import { createSRPCClient } from "@srpc/core/client";
+ * import { createSRPCClient } from "@srpc.org/core/client";
  * import type { AppRouter } from "./server";
  *
  * const client = createSRPCClient<AppRouter>({
@@ -83,7 +83,7 @@ export type SRPCClientOptions = {
  *
  * @example Basic usage
  * ```typescript
- * import { createSRPCClient } from "@srpc/core/client";
+ * import { createSRPCClient } from "@srpc.org/core/client";
  * import type { AppRouter } from "./server";
  *
  * const client = createSRPCClient<AppRouter>({

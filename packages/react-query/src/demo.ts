@@ -1,5 +1,5 @@
-import { createSRPCClient } from "@srpc/core/client";
-import { initSRPC } from "@srpc/core/server";
+import { createSRPCClient } from "@srpc.org/core/client";
+import { initSRPC } from "@srpc.org/core/server";
 import { createSRPCQueryOptions } from "./mod";
 
 const s = initSRPC();

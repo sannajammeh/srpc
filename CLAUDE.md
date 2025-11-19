@@ -39,7 +39,7 @@ cd packages/react-query && pnpm release  # Test and publish react-query to JSR
 
 ## Architecture
 
-### Core Package (`@srpc/core`)
+### Core Package (`@srpc.org/core`)
 
 The heart of the RPC framework, providing both server and client functionality.
 
@@ -134,7 +134,7 @@ Next.js application demonstrating SRPC usage with Server Components and React Qu
 
 ```
 packages/
-  core/              # @srpc/core - Core RPC framework
+  core/              # @srpc.org/core - Core RPC framework
     src/
       server/        # Server-side router and adapters
       client/        # Client proxy builder
