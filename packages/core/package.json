@@ -1,6 +1,6 @@
 {
   "name": "@srpc/core",
-  "version": "0.20.0",
+  "version": "0.20.1",
   "description": "A lightweight, type-safe RPC framework for TypeScript",
   "type": "module",
   "main": "./dist/index.js",
