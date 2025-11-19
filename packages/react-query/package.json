@@ -1,25 +1,45 @@
 {
   "name": "@srpc/react-query",
-  "version": "0.0.0",
-  "description": "",
+  "version": "0.0.16",
+  "description": "React Query integration for SRPC - Type-safe RPC with automatic React Query hooks",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "bunchee",
     "test": "vitest run",
     "test:dev": "vitest",
-    "release": "pnpm test && pnpx jsr publish"
+    "release:npm": "pnpm build && pnpm test && npm publish",
+    "release:jsr": "pnpm test && pnpx jsr publish"
   },
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./context": {
+      "types": "./dist/context.d.ts",
+      "default": "./dist/context.js"
     }
   },
-  "keywords": [],
+  "keywords": [
+    "rpc",
+    "typescript",
+    "react-query",
+    "tanstack-query",
+    "type-safe",
+    "hooks"
+  ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@srpc/core": "workspace:*",
     "@tanstack/react-query": "^5.90.10",
     "@types/react": "^19.2.6",
+    "bunchee": "^6.6.2",
     "get-port-please": "^3.1.2",
     "react": "^19.2.0",
     "vitest": "^4.0.10"
@@ -27,7 +47,6 @@
   "peerDependencies": {
     "@srpc/core": "workspace:*",
     "@tanstack/react-query": ">=5.90",
-    "@types/react": ">=19",
     "react": ">=19"
   }
 }

@@ -1,34 +1,50 @@
 {
   "name": "@srpc/core",
   "version": "0.0.0",
-  "description": "",
+  "description": "A lightweight, type-safe RPC framework for TypeScript",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "bunchee",
     "test": "vitest run",
     "test:dev": "vitest",
-    "release": "pnpm test && pnpx jsr publish"
+    "release:npm": "pnpm build && pnpm test && npm publish",
+    "release:jsr": "pnpm test && pnpx jsr publish"
   },
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "default": "./src/index.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./server": {
-      "types": "./src/server/index.ts",
-      "default": "./src/server/index.ts"
+      "types": "./dist/server.d.ts",
+      "default": "./dist/server.js"
     },
     "./client": {
-      "types": "./src/client/index.ts",
-      "default": "./src/client/index.ts"
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
     },
     "./shared": {
-      "types": "./src/shared/index.ts",
-      "default": "./src/shared/index.ts"
+      "types": "./dist/shared.d.ts",
+      "default": "./dist/shared.js"
     }
   },
-  "keywords": [],
+  "keywords": [
+    "rpc",
+    "typescript",
+    "type-safe",
+    "api",
+    "client",
+    "server"
+  ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
+    "bunchee": "^6.6.2",
     "get-port-please": "^3.1.2",
     "vitest": "^4.0.10"
   }

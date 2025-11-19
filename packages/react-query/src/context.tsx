@@ -56,7 +56,7 @@ import React, {
 import {
   createSRPCQueryOptions,
   type DecoratedQueryProcedureRecord,
-} from "./mod";
+} from "./createSRPCQueryOptions";
 
 /**
  * Type definition for the SRPC context value.
