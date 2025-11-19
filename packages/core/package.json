@@ -1,6 +1,6 @@
 {
   "name": "@srpc/core",
-  "version": "0.0.0",
+  "version": "0.20.0",
   "description": "A lightweight, type-safe RPC framework for TypeScript",
   "type": "module",
   "main": "./dist/index.js",
@@ -12,8 +12,9 @@
     "build": "bunchee",
     "test": "vitest run",
     "test:dev": "vitest",
-    "release:npm": "pnpm build && pnpm test && npm publish",
-    "release:jsr": "pnpm test && pnpx jsr publish"
+    "version": "node ../../version.mjs",
+    "release:npm": "npm publish",
+    "release:jsr": "pnpx jsr publish"
   },
   "exports": {
     ".": {

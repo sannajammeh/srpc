@@ -13,6 +13,15 @@
     "check-types": {
       "dependsOn": ["^check-types"]
     },
+    "release:npm": {
+      "dependsOn": ["version", "build", "test"]
+    },
+    "release:jsr": {
+      "dependsOn": ["version", "test"]
+    },
+    "version": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
       "persistent": true
