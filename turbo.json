@@ -17,10 +17,10 @@
       "dependsOn": ["^check-types"]
     },
     "release:npm": {
-      "dependsOn": ["version", "build", "test"]
+      "dependsOn": ["build", "test"]
     },
     "release:jsr": {
-      "dependsOn": ["version", "test"]
+      "dependsOn": ["test"]
     },
     "version": {
       "cache": false
