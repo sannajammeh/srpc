@@ -14,7 +14,7 @@
     "test": "vitest run",
     "test:dev": "vitest",
     "version": "node ../../version.mjs",
-    "release:npm": "npm publish",
+    "release:npm": "pnpm publish --access=public",
     "release:jsr": "pnpx jsr publish"
   },
   "exports": {
