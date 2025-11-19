@@ -1,11 +1,12 @@
 {
-  "name": "@srpc/core",
+  "name": "@srpc/react-query",
   "version": "0.0.8",
   "license": "MIT",
   "description": "A simple RPC framework",
   "exports": {
     ".": "./src/mod.ts",
     "./client": "./src/client/index.ts",
-    "./server": "./src/server/index.ts"
+    "./server": "./src/server/index.ts",
+    "./shared": "./src/shared.ts"
   }
 }

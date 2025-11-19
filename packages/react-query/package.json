@@ -1,5 +1,5 @@
 {
-  "name": "@srpc/core",
+  "name": "@srpc/react-query",
   "version": "0.0.9",
   "description": "",
   "scripts": {
@@ -11,25 +11,23 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
-    },
-    "./server": {
-      "types": "./src/server/index.ts",
-      "default": "./src/server/index.ts"
-    },
-    "./client": {
-      "types": "./src/client/index.ts",
-      "default": "./src/client/index.ts"
-    },
-    "./shared": {
-      "types": "./src/shared/index.ts",
-      "default": "./src/shared/index.ts"
     }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@srpc/core": "workspace:*",
+    "@tanstack/react-query": "^5.90.10",
+    "@types/react": "^19.2.6",
     "get-port-please": "^3.1.2",
+    "react": "^19.2.0",
     "vitest": "^4.0.10"
+  },
+  "peerDependencies": {
+    "@srpc/core": "workspace:*",
+    "@tanstack/react-query": ">=5.90",
+    "@types/react": ">=19",
+    "react": ">=19"
   }
 }

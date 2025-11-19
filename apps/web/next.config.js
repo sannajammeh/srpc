@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@srpc/core"],
+  transpilePackages: ["@srpc/core", "@srpc/react-query"],
 };
 
 export default nextConfig;

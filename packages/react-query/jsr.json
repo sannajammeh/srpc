@@ -1,0 +1,9 @@
+{
+  "name": "@srpc/react-query",
+  "version": "0.0.9",
+  "license": "MIT",
+  "description": "A simple RPC framework",
+  "exports": {
+    ".": "./src/mod.ts"
+  }
+}

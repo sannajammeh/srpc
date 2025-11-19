@@ -1,6 +1,7 @@
 import { SRPC, type AnySRPC } from "../server";
 import type { Routes } from "../server/api";
 import type { AnyProcedure } from "./types";
+import { createFlatProxy, createRecursiveProxy } from "./proxy";
 
 export interface Serializer {
   serialize: (value: any) => any;
@@ -88,3 +89,10 @@ export type DecoratedProcedureInputs<TRouter extends Routes<any>> = {
 
 export type InferRouterInputs<TRouter extends AnySRPC> =
   DecoratedProcedureInputs<TRouter["ipc"]>;
+
+export type { Routes, AnyProcedure };
+
+// biome-ignore lint/suspicious/noExplicitAny: <Any Routes is ok>
+export type AnyRoutes = Routes<any>;
+
+export { createFlatProxy, createRecursiveProxy };
