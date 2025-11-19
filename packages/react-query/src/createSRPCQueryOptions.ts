@@ -99,6 +99,8 @@ export type OptionsFactory<
 > = {
   queryOptions: (...args: Parameters<Procedure>) => UseQueryOptions<TOutput>;
   mutationOptions: () => UseMutationOptions<TOutput, Error, TInput>;
+  queryKey: (...args: Parameters<Procedure>) => string[];
+  mutationKey: () => string[];
 };
 
 /**
@@ -229,6 +231,10 @@ export function createSRPCQueryOptions<
     ({ path, args }) => {
       const lastPath = path[path.length - 1];
       const pathWithoutTarget = path.slice(0, -1);
+
+      if (lastPath === "queryKey" || lastPath === "mutationKey") {
+        return [...pathWithoutTarget, args];
+      }
 
       const procedure: ClientProcedure<any> = pathWithoutTarget.reduce(
         (acc, key) => acc[key] as any,
