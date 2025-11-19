@@ -10,7 +10,7 @@
  * @example Basic usage
  * ```typescript
  * import { createSRPCClient } from "@srpc/core/client";
- * import { createSRPCQueryOptions } from "@srpc/react-query";
+ * import { createSRPCQueryOptions } from "@srpc.org/react-query";
  * import { useQuery } from "@tanstack/react-query";
  * import type { AppRouter } from "./server";
  *
@@ -29,7 +29,7 @@
  *
  * @example With React Context
  * ```typescript
- * import { createSRPCContext } from "@srpc/react-query";
+ * import { createSRPCContext } from "@srpc.org/react-query";
  *
  * // Create context and hooks
  * const { SRPCProvider, useSRPC } = createSRPCContext<AppRouter>();
@@ -166,7 +166,7 @@ export type DecoratedQueryProcedureRecord<TRouter extends AnyRoutes> = {
  * @example Basic usage
  * ```typescript
  * import { createSRPCClient } from "@srpc/core/client";
- * import { createSRPCQueryOptions } from "@srpc/react-query";
+ * import { createSRPCQueryOptions } from "@srpc.org/react-query";
  * import { useQuery, useMutation } from "@tanstack/react-query";
  * import type { AppRouter } from "./server";
  *

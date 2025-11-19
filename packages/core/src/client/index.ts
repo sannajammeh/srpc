@@ -123,7 +123,7 @@ export type SRPCClientOptions = {
  *
  * @example Error handling
  * ```typescript
- * import { SRPCError } from "@srpc/core";
+ * import { SRPCError } from "@srpc.org/core";
  *
  * try {
  *   await client.users.getUser(999);

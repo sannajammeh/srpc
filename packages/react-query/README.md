@@ -61,7 +61,7 @@ export type AppRouter = typeof appRouter;
 ```typescript
 // lib/rpc.ts
 import { createSRPCClient } from "@srpc/core/client";
-import { createSRPCContext } from "@srpc/react-query";
+import { createSRPCContext } from "@srpc.org/react-query";
 import type { AppRouter } from "../server/router";
 
 // Create SRPC client
@@ -230,7 +230,7 @@ If you prefer not to use React Context:
 
 ```typescript
 import { createSRPCClient } from "@srpc/core/client";
-import { createSRPCQueryOptions } from "@srpc/react-query";
+import { createSRPCQueryOptions } from "@srpc.org/react-query";
 import { useQuery } from "@tanstack/react-query";
 import type { AppRouter } from "./server/router";
 
@@ -255,7 +255,7 @@ function MyComponent() {
 
 ```typescript
 import { createSRPCClient } from "@srpc/core/client";
-import { createSRPCContext } from "@srpc/react-query";
+import { createSRPCContext } from "@srpc.org/react-query";
 import superjson from "superjson";
 
 const client = createSRPCClient<AppRouter>({

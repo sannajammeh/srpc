@@ -11,7 +11,7 @@
  *
  * @example
  * ```typescript
- * import { SRPCError, type InferRouterInputs, type InferRouterOutputs } from "@srpc/core";
+ * import { SRPCError, type InferRouterInputs, type InferRouterOutputs } from "@srpc.org/core";
  * import type { AppRouter } from "./server";
  *
  * // Use type inference utilities
@@ -46,7 +46,7 @@ export { type ErrorCodes } from "./shared";
  *
  * @example
  * ```typescript
- * import { SRPCError } from "@srpc/core";
+ * import { SRPCError } from "@srpc.org/core";
  *
  * // In a procedure
  * const user = await db.users.findById(id);
@@ -76,7 +76,7 @@ export { SRPCError } from "./shared";
  *
  * @example
  * ```typescript
- * import type { InferRouterInputs } from "@srpc/core";
+ * import type { InferRouterInputs } from "@srpc.org/core";
  * import type { AppRouter } from "./server";
  *
  * type RouterInputs = InferRouterInputs<AppRouter>;
@@ -100,7 +100,7 @@ export { type InferRouterInputs } from "./shared";
  *
  * @example
  * ```typescript
- * import type { InferRouterOutputs } from "@srpc/core";
+ * import type { InferRouterOutputs } from "@srpc.org/core";
  * import type { AppRouter } from "./server";
  *
  * type RouterOutputs = InferRouterOutputs<AppRouter>;

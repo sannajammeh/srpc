@@ -132,7 +132,7 @@ export type SRPCContextFactory<TRouter extends AnySRPC> = {
  * @example Basic setup
  * ```typescript
  * import { createSRPCClient } from "@srpc/core/client";
- * import { createSRPCContext } from "@srpc/react-query";
+ * import { createSRPCContext } from "@srpc.org/react-query";
  * import type { AppRouter } from "./server";
  *
  * // Create client

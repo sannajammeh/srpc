@@ -29,8 +29,8 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@srpc/core": "workspace:*",
-    "@srpc/react-query": "workspace:*",
+    "@srpc.org/core": "workspace:*",
+    "@srpc.org/react-query": "workspace:*",
     "@types/node": "^24.10.1",
     "@types/react": "19.2.6",
     "@types/react-dom": "19.2.3",

@@ -190,7 +190,7 @@ Use `SRPCError` for proper HTTP status code mapping:
 
 ```typescript
 import { initSRPC } from "@srpc/core/server";
-import { SRPCError } from "@srpc/core";
+import { SRPCError } from "@srpc.org/core";
 
 const s = initSRPC();
 
@@ -256,7 +256,7 @@ const { fetch: handleRequest } = srpcFetchApi({
 Extract input and output types from your router:
 
 ```typescript
-import type { InferRouterInputs, InferRouterOutputs } from "@srpc/core";
+import type { InferRouterInputs, InferRouterOutputs } from "@srpc.org/core";
 import type { AppRouter } from "./server";
 
 // Get all input types

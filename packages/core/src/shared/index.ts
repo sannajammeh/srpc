@@ -125,7 +125,7 @@ export const StatusCodeMap = {
  *
  * @example Throwing errors in procedures
  * ```typescript
- * import { SRPCError } from "@srpc/core";
+ * import { SRPCError } from "@srpc.org/core";
  *
  * const appRouter = s.router({
  *   getUser: async (_, id: number) => {
@@ -147,7 +147,7 @@ export const StatusCodeMap = {
  *
  * @example Handling errors on the client
  * ```typescript
- * import { SRPCError } from "@srpc/core";
+ * import { SRPCError } from "@srpc.org/core";
  *
  * try {
  *   const user = await client.getUser(999);
@@ -326,7 +326,7 @@ export type DecoratedProcedureOutputs<TRouter extends Routes<any>> = {
  *
  * @example
  * ```typescript
- * import type { InferRouterOutputs } from "@srpc/core";
+ * import type { InferRouterOutputs } from "@srpc.org/core";
  * import type { AppRouter } from "./server";
  *
  * type RouterOutputs = InferRouterOutputs<AppRouter>;
@@ -386,7 +386,7 @@ export type DecoratedProcedureInputs<TRouter extends Routes<any>> = {
  *
  * @example
  * ```typescript
- * import type { InferRouterInputs } from "@srpc/core";
+ * import type { InferRouterInputs } from "@srpc.org/core";
  * import type { AppRouter } from "./server";
  *
  * type RouterInputs = InferRouterInputs<AppRouter>;
