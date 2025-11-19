@@ -1,5 +1,0 @@
-{
-  "imports": {
-    "@srpc/core": "jsr:@srpc/core"
-  }
-}

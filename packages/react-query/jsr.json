@@ -6,5 +6,10 @@
   "description": "A simple RPC framework",
   "exports": {
     ".": "./src/mod.ts"
+  },
+  "imports": {
+    "@srpc/core/server": "jsr:@srpc/core@^0.0.10/server",
+    "@srpc/core/shared": "jsr:@srpc/core@^0.0.10/shared",
+    "@srpc/core": "jsr:@srpc/core@^0.0.10"
   }
 }
