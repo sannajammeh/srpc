@@ -1,4 +1,4 @@
-# @srpc/react-query
+# @srpc.org/react-query
 
 React Query integration for SRPC - Type-safe RPC with automatic React Query hooks and query/mutation options generation.
 
@@ -6,11 +6,11 @@ React Query integration for SRPC - Type-safe RPC with automatic React Query hook
 
 ```bash
 # Using JSR (recommended)
-deno add @srpc/react-query
-npx jsr add @srpc/react-query
-yarn dlx jsr add @srpc/react-query
-pnpm dlx jsr add @srpc/react-query
-bunx jsr add @srpc/react-query
+deno add @srpc.org/react-query
+npx jsr add @srpc.org/react-query
+yarn dlx jsr add @srpc.org/react-query
+pnpm dlx jsr add @srpc.org/react-query
+bunx jsr add @srpc.org/react-query
 ```
 
 ## Features

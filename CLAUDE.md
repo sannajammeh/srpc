@@ -82,7 +82,7 @@ async (context: TContext, ...args: any[]) => any
 - Client calls omit the context parameter
 - Server adapters inject context automatically
 
-### React Query Package (`@srpc/react-query`)
+### React Query Package (`@srpc.org/react-query`)
 
 Provides React Query integration for SRPC procedures.
 
@@ -140,7 +140,7 @@ packages/
       client/        # Client proxy builder
       shared/        # Shared utilities and types
       test/          # Test suite with Vitest
-  react-query/       # @srpc/react-query - React Query integration
+  react-query/       # @srpc.org/react-query - React Query integration
   ui/                # Shared React components
   typescript-config/ # Shared TypeScript configurations
   eslint-config/     # Shared ESLint configurations

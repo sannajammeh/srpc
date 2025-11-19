@@ -10,7 +10,7 @@
  * @example Complete setup
  * ```typescript
  * import { createSRPCClient } from "@srpc.org/core/client";
- * import { createSRPCContext } from "@srpc/react-query/context";
+ * import { createSRPCContext } from "@srpc.org/react-query/context";
  * import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
  * import type { AppRouter } from "./server";
  *
