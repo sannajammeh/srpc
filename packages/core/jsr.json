@@ -1,11 +1,13 @@
 {
-  "name": "@srpc/core",
-  "version": "0.0.8",
+  "$schema": "https://jsr.io/schema/config-file.v1.json",
+  "name": "@srpc.org/core",
+  "version": "0.20.3",
   "license": "MIT",
-  "description": "A simple RPC framework",
+  "description": "A lightweight, type-safe RPC framework for TypeScript with automatic type inference, multiple runtime support (Node.js, Deno, Bun, Cloudflare Workers), and zero dependencies",
   "exports": {
     ".": "./src/mod.ts",
     "./client": "./src/client/index.ts",
-    "./server": "./src/server/index.ts"
+    "./server": "./src/server/index.ts",
+    "./shared": "./src/shared/index.ts"
   }
 }

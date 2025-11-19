@@ -1,18 +1,25 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { rpc } from "../rpc";
+import { useState } from "react";
+import { useSRPC } from "#rpc";
+import { useQuery } from "@tanstack/react-query";
 
 const ClientComponent = () => {
-  const [user, setUser] = useState<any>(null);
+  const [userId, setUserId] = useState(1);
 
-  useEffect(() => {
-    rpc.users.getUser(1).then(setUser);
-  }, []);
+  const srpc = useSRPC();
+
+  const { data } = useQuery(srpc.users.getUser.queryOptions(userId));
+
   return (
     <div>
+      <h2>User data</h2>
       <pre>
-        <code>{JSON.stringify(user, null, 2)}</code>
+        <code>{JSON.stringify(data, null, 2)}</code>
       </pre>
+
+      <button type="button" onClick={() => setUserId((prev) => prev + 1)}>
+        Fetch next user
+      </button>
     </div>
   );
 };

@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "verbatimModuleSyntax": true,
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx"
+  }
+}

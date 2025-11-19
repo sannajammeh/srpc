@@ -5,15 +5,17 @@
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "release": "turbo run release:npm release:jsr --filter=./packages/**",
+    "release:npm": "turbo run release:npm --filter=./packages/**"
   },
   "devDependencies": {
     "prettier": "^3.2.5",
     "turbo": "^2.3.3",
-    "typescript": "5.5.4"
+    "typescript": "5.9.3"
   },
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@10.22.0",
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   }
 }
