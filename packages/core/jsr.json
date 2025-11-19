@@ -1,4 +1,5 @@
 {
+  "$schema": "https://jsr.io/schema/config-file.v1.json",
   "name": "@srpc/react-query",
   "version": "0.0.8",
   "license": "MIT",
@@ -7,6 +8,6 @@
     ".": "./src/mod.ts",
     "./client": "./src/client/index.ts",
     "./server": "./src/server/index.ts",
-    "./shared": "./src/shared.ts"
+    "./shared": "./src/shared/index.ts"
   }
 }
