@@ -95,7 +95,7 @@ import {
 export type OptionsFactory<
   Procedure extends ClientProcedure<any>,
   TInput = Parameters<Procedure>,
-  TOutput = ReturnType<Procedure>,
+  TOutput = Awaited<ReturnType<Procedure>>,
 > = {
   queryOptions: (...args: Parameters<Procedure>) => UseQueryOptions<TOutput>;
   mutationOptions: () => UseMutationOptions<TOutput, Error, TInput>;
