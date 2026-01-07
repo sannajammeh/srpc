@@ -45,12 +45,20 @@ export const srpcFetchApi = <TRouter extends AnySRPC>({
         });
       } catch (error) {
         if (error instanceof SRPCError) {
-          return new Response(serializer.serialize(error), {
-            status: StatusCodeMap[error.code],
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
+          return new Response(
+            serializer.serialize({
+              ...error,
+              stack: null,
+              message: error.message,
+            }),
+            {
+              status: StatusCodeMap[error.code],
+              statusText: error.message,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
         }
 
         const message = error instanceof Error ? error.message : String(error);
