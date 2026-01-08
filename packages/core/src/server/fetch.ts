@@ -6,16 +6,20 @@ import {
   type Serializer,
 } from "../shared";
 import { sRPC_API, type SrpcBaseOptions } from "./api";
+import { handleBatchRequest } from "./batch";
 
 export const srpcFetchApi = <TRouter extends AnySRPC>({
   router,
   endpoint,
   createContext,
   transformer: serializer = defaultSerializer,
+  batchEndpoint = "/_batch",
 }: SrpcBaseOptions<TRouter> & {
   createContext?: (req: Request) => Promise<TRouter["__context"]>;
   transformer?: Serializer;
   endpoint: string;
+  /** Batch endpoint path (default: "/_batch") */
+  batchEndpoint?: string;
 }): {
   fetch: (req: Request) => Promise<Response>;
 } => {
@@ -27,7 +31,18 @@ export const srpcFetchApi = <TRouter extends AnySRPC>({
     fetch: async (req: Request) => {
       const url = new URL(req.url);
       const context = await createContext?.(req);
-      const path = url.pathname.replace(`${endpoint}/`, "");
+      const pathname = url.pathname;
+
+      // Handle batch endpoint
+      if (pathname === `${endpoint}${batchEndpoint}`) {
+        const body = await req.text();
+        const result = await handleBatchRequest(api, body, context, serializer);
+        return new Response(serializer.serialize(result), {
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+
+      const path = pathname.replace(`${endpoint}/`, "");
       const body = await req.text();
       const deserializedArgs = serializer.deserialize(body);
 

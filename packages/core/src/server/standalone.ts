@@ -1,21 +1,40 @@
 import type { AnySRPC } from ".";
-import {
-  defaultSerializer,
-  SRPCError,
-  StatusCodeMap,
-  type Serializer,
-} from "../shared";
-import { sRPC_API, type SrpcBaseOptions } from "./api";
+import { defaultSerializer, type Serializer } from "../shared";
+import { srpcFetchApi } from "./fetch";
 
 import { createServer, Server, type IncomingMessage } from "node:http";
 
 async function bodyParser(req: IncomingMessage): Promise<string> {
   let body = "";
   for await (const chunk of req) {
-    // Process chunk
     body += chunk;
   }
   return body;
+}
+
+function incomingMessageToRequest(
+  req: IncomingMessage,
+  body: string
+): Request {
+  const host = req.headers.host ?? "localhost";
+  const proto =
+    (req.headers["x-forwarded-proto"] as string)?.split(",")[0]?.trim() ??
+    ((req.socket as any)?.encrypted ? "https" : "http");
+  const url = new URL(`${proto}://${host}${req.url}`);
+
+  return new Request(url.toString(), {
+    method: req.method ?? "GET",
+    headers: Object.entries(req.headers).reduce(
+      (acc, [key, value]) => {
+        if (value) {
+          acc[key] = Array.isArray(value) ? value.join(", ") : value;
+        }
+        return acc;
+      },
+      {} as Record<string, string>
+    ),
+    body: req.method !== "GET" && req.method !== "HEAD" ? body : undefined,
+  });
 }
 
 export const createSrpcServer = <TRouter extends AnySRPC>({
@@ -23,64 +42,61 @@ export const createSrpcServer = <TRouter extends AnySRPC>({
   endpoint,
   createContext,
   transformer: serializer = defaultSerializer,
-}: SrpcBaseOptions<TRouter> & {
+  batchEndpoint = "/_batch",
+}: {
+  router: TRouter;
   createContext?: (req: IncomingMessage) => Promise<TRouter["__context"]>;
   transformer?: Serializer;
   endpoint: string;
+  /** Batch endpoint path (default: "/_batch") */
+  batchEndpoint?: string;
 }): Server => {
-  const api = new sRPC_API({
+  // Create fetch adapter with a wrapper for context that uses IncomingMessage
+  let currentIncomingMessage: IncomingMessage | null = null;
+
+  const fetchApi = srpcFetchApi({
     router,
+    endpoint,
+    transformer: serializer,
+    batchEndpoint,
+    createContext: async () => {
+      if (!currentIncomingMessage) {
+        return undefined as TRouter["__context"];
+      }
+      return createContext?.(currentIncomingMessage) as Promise<
+        TRouter["__context"]
+      >;
+    },
   });
 
   return createServer(async function (req, res) {
-    const url = new URL(`http://${process.env.HOST ?? "localhost"}${req.url}`);
-    const context = await createContext?.(req);
-
     if (req.method !== "POST") {
       res.statusCode = 405;
       res.end();
       return;
     }
 
-    const path = url.pathname.replace(`${endpoint}/`, "");
-
-    // Consume body
-
+    // Parse body first
     const body = await bodyParser(req);
-    const deserializedArgs = serializer.deserialize(body);
+
+    // Store reference for context creation
+    currentIncomingMessage = req;
 
     try {
-      const data = await api.call(
-        path as keyof TRouter["ipc"],
-        context,
-        deserializedArgs
-      );
+      // Convert to WinterCG Request
+      const request = incomingMessageToRequest(req, body);
 
-      res.writeHead(200, {
-        "Content-Type": "application/json",
+      // Delegate to fetch adapter
+      const response = await fetchApi.fetch(request);
+
+      // Convert Response back to Node
+      res.writeHead(response.status, {
+        "Content-Type":
+          response.headers.get("Content-Type") ?? "application/json",
       });
-      res.end(serializer.serialize(data));
-      return;
-    } catch (error) {
-      if (error instanceof SRPCError) {
-        const statusCode = StatusCodeMap[error.code];
-        res.writeHead(statusCode, {
-          "Content-Type": "application/json",
-        });
-        res.end(serializer.serialize(error));
-        return;
-      }
-
-      const message = error instanceof Error ? error.message : String(error);
-
-      res.writeHead(500, {
-        "Content-Type": "application/json",
-      });
-
-      res.end(
-        serializer.serialize(new SRPCError(message, "INTERNAL_SERVER_ERROR"))
-      );
-      return;
+      res.end(await response.text());
+    } finally {
+      currentIncomingMessage = null;
     }
   });
 };
