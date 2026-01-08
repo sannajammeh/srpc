@@ -21,7 +21,7 @@
   "dependencies": {
     "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.90.10",
-    "next": "^16.0.3",
+    "next": "^16.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "seroval": "^1.1.1"
