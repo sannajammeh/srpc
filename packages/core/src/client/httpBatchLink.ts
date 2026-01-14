@@ -24,7 +24,12 @@
  * ```
  */
 
-import { type Serializer, defaultSerializer, SRPCError } from "../shared";
+import {
+  type Serializer,
+  defaultSerializer,
+  SRPCError,
+  type ErrorCodes,
+} from "../shared";
 import type { SRPCLink } from "./link";
 
 interface PendingRequest {
@@ -107,10 +112,25 @@ export function httpBatchLink({
       });
 
       if (!response.ok) {
-        const error = new SRPCError(
-          response.statusText || "Batch request failed",
-          "GENERIC_ERROR"
-        );
+        let message = response.statusText || "Batch request failed";
+        let code: ErrorCodes = "GENERIC_ERROR";
+
+        try {
+          const errorText = await response.text();
+          const parsed = transformer.deserialize(errorText);
+          if (parsed && typeof parsed === "object") {
+            if ("message" in parsed && typeof parsed.message === "string") {
+              message = parsed.message;
+            }
+            if ("code" in parsed && typeof parsed.code === "string") {
+              code = parsed.code as ErrorCodes;
+            }
+          }
+        } catch {
+          // Failed to parse error, use defaults
+        }
+
+        const error = new SRPCError(message, code);
         batch.forEach((req) => req.reject(error));
         return;
       }
@@ -126,13 +146,13 @@ export function httpBatchLink({
         const res = responseMap.get(req.id);
         if (!res) {
           req.reject(
-            new SRPCError("Missing response for request", "GENERIC_ERROR")
+            new SRPCError("Missing response for request", "GENERIC_ERROR"),
           );
         } else if (res.ok) {
           req.resolve(res.data);
         } else if (res.error) {
           req.reject(
-            new SRPCError(res.error.message, res.error.code as ErrorCodes)
+            new SRPCError(res.error.message, res.error.code as ErrorCodes),
           );
         } else {
           req.reject(new SRPCError("Unknown response format", "GENERIC_ERROR"));
@@ -144,7 +164,7 @@ export function httpBatchLink({
           ? error
           : new SRPCError(
               error instanceof Error ? error.message : String(error),
-              "INTERNAL_SERVER_ERROR"
+              "INTERNAL_SERVER_ERROR",
             );
       batch.forEach((req) => req.reject(srpcError));
     }
@@ -169,5 +189,3 @@ export function httpBatchLink({
     });
   };
 }
-
-type ErrorCodes = Parameters<typeof SRPCError.prototype.constructor>[1];

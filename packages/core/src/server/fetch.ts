@@ -30,17 +30,59 @@ export const srpcFetchApi = <TRouter extends AnySRPC>({
   return {
     fetch: async (req: Request) => {
       const url = new URL(req.url);
-      const context = await createContext?.(req);
       const pathname = url.pathname;
 
       // Handle batch endpoint
       if (pathname === `${endpoint}${batchEndpoint}`) {
-        const body = await req.text();
-        const result = await handleBatchRequest(api, body, context, serializer);
-        return new Response(serializer.serialize(result), {
-          headers: { "Content-Type": "application/json" },
-        });
+        try {
+          const context = await createContext?.(req);
+          const body = await req.text();
+          const result = await handleBatchRequest(
+            api,
+            body,
+            context,
+            serializer,
+          );
+          return new Response(serializer.serialize(result), {
+            headers: { "Content-Type": "application/json" },
+          });
+        } catch (error) {
+          if (error instanceof SRPCError) {
+            return new Response(
+              serializer.serialize({
+                ...error,
+                stack: null,
+                message: error.message,
+              }),
+              {
+                status: StatusCodeMap[error.code],
+                statusText: error.message,
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              },
+            );
+          }
+
+          const message =
+            error instanceof Error ? error.message : String(error);
+          console.error(error);
+
+          return new Response(
+            serializer.serialize(
+              new SRPCError(message, "INTERNAL_SERVER_ERROR"),
+            ),
+            {
+              status: 500,
+              headers: {
+                "Content-Type": "application/json",
+              },
+            },
+          );
+        }
       }
+
+      const context = await createContext?.(req);
 
       const path = pathname.replace(`${endpoint}/`, "");
       const body = await req.text();
@@ -50,7 +92,7 @@ export const srpcFetchApi = <TRouter extends AnySRPC>({
         const data = await api.call(
           path as keyof TRouter["ipc"],
           context,
-          deserializedArgs
+          deserializedArgs,
         );
 
         return new Response(serializer.serialize(data), {
@@ -72,7 +114,7 @@ export const srpcFetchApi = <TRouter extends AnySRPC>({
               headers: {
                 "Content-Type": "application/json",
               },
-            }
+            },
           );
         }
 
@@ -87,7 +129,7 @@ export const srpcFetchApi = <TRouter extends AnySRPC>({
             headers: {
               "Content-Type": "application/json",
             },
-          }
+          },
         );
       }
     },
