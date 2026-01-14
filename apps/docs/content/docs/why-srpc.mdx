@@ -1,0 +1,104 @@
+---
+title: Why yet another RPC library?
+description: The philosophy behind sRPC and what makes it different
+---
+
+## The Problem
+
+Modern TypeScript applications often have a disconnect between client and server code. You define types on the server, then manually recreate them on the client. You write API endpoints, then write fetch calls to consume them. The same logic exists in two places.
+
+Existing solutions like tRPC are powerful but come with complexity:
+- Heavy abstractions and middleware systems
+- Framework-specific adapters
+- Large API surface to learn
+
+## The sRPC Philosophy
+
+sRPC was built around one core idea: **a single interface for both client and server**.
+
+```typescript
+// Define once on the server
+const router = s.router({
+  users: {
+    get: async (ctx, id: string) => db.users.find(id),
+    create: async (ctx, data: UserInput) => db.users.create(data),
+  }
+});
+
+// Call it the same way everywhere
+await client.users.get('123');      // HTTP call from browser
+await caller.users.get('123');      // Direct call on server
+```
+
+The client proxy mirrors the server router exactly. No mental translation. No separate API clients. One interface.
+
+## Design Principles
+
+### Minimal Surface Area
+
+sRPC exposes just a handful of functions:
+- `initSRPC()` - create a router builder
+- `createSRPCClient()` - create a client
+- `createSRPCCaller()` - create a server-side caller
+- `srpcFetchApi()` - Fetch API adapter
+
+That's it. No plugins, no middleware chains, no complex configuration.
+
+### Framework Agnostic
+
+sRPC uses the Web Fetch API. If your runtime supports `Request` and `Response`, sRPC works:
+
+- Node.js
+- Deno
+- Bun
+- Cloudflare Workers
+- Vercel Edge
+- Any Fetch-compatible runtime
+
+### Type Safety Without Codegen
+
+Types flow naturally from server to client through TypeScript inference. No build step, no generated files, no sync issues.
+
+```typescript
+// Server knows the return type
+const router = s.router({
+  getUser: async (_, id: number) => ({ id, name: 'John', age: 30 }),
+});
+
+// Client infers it automatically
+const user = await client.getUser(1);
+//    ^? { id: number; name: string; age: number }
+```
+
+### Same Interface Everywhere
+
+The key differentiator. Whether you're in:
+- A React component making HTTP calls
+- A Next.js Server Component calling directly
+- A background job on the server
+- A test file
+
+The API is identical:
+
+```typescript
+// All of these work the same way
+await client.posts.create({ title: 'Hello' });
+await caller.posts.create({ title: 'Hello' });
+```
+
+## When to Use sRPC
+
+sRPC is ideal when you want:
+- Minimal setup and learning curve
+- Type safety without complexity
+- Same mental model across your codebase
+- Lightweight bundle size
+
+Consider other options if you need:
+- Complex middleware pipelines
+- Subscriptions/WebSocket support
+- GraphQL-style field selection
+
+## Getting Started
+
+Ready to try it? Head to the [Getting Started](/docs) guide.

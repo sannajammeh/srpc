@@ -1,0 +1,184 @@
+---
+title: Next.js Guide
+description: Use SRPC in Next.js with Server Components and the package imports pattern
+---
+
+This guide shows how to use SRPC in Next.js with a pattern that provides the same API for both Server Components and Client Components.
+
+## The Problem
+
+In Next.js, you need different approaches for server and client:
+- **Server Components**: Call procedures directly (no HTTP overhead)
+- **Client Components**: Call procedures via HTTP
+
+SRPC solves this with **package imports** - a single import that resolves to different implementations based on environment.
+
+## Setup
+
+### 1. Create the Router
+
+```typescript
+// app/server/router.ts
+import { initSRPC, srpcFetchApi } from "@srpc.org/core/server";
+
+const s = initSRPC();
+
+export const appRouter = s.router({
+  sayHello: async (_, name: string) => `Hello ${name}!`,
+  users: s.router({
+    getUser: async (_, id: number) => ({ id, name: "John" }),
+  }),
+});
+
+export type AppRouter = typeof appRouter;
+
+// Fetch handler for the API route
+export const { fetch: handler } = srpcFetchApi({
+  router: appRouter,
+  endpoint: "/api/srpc",
+});
+```
+
+### 2. Create the API Route
+
+```typescript
+// app/api/srpc/[[...srpc]]/route.ts
+import { handler } from "@/app/server/router";
+
+export { handler as POST };
+```
+
+### 3. Create RPC Files
+
+Create three files in a `rpc/` folder:
+
+```typescript
+// rpc/rpc.client.ts - Used in browser/Client Components
+import { createSRPCClient } from "@srpc.org/core/client";
+import type { AppRouter } from "@/app/server/router";
+
+export const rpc = createSRPCClient<AppRouter>({
+  endpoint: "/api/srpc",
+});
+```
+
+```typescript
+// rpc/rpc.server.ts - Used in Server Components
+import { createSRPCCaller } from "@srpc.org/core/server";
+import { appRouter, type AppRouter } from "@/app/server/router";
+
+export const rpc = createSRPCCaller<AppRouter>({
+  router: appRouter,
+});
+```
+
+```typescript
+// rpc/rpc.d.ts - Type declarations
+import type { InferRPCFromRouter } from "@srpc.org/core/client";
+import type { AppRouter } from "@/app/server/router";
+
+export const rpc: InferRPCFromRouter<AppRouter>;
+```
+
+### 4. Configure Package Imports
+
+Add to your `package.json`:
+
+```json
+{
+  "imports": {
+    "#rpc": {
+      "types": "./rpc/rpc.d.ts",
+      "browser": "./rpc/rpc.client.ts",
+      "react-server": "./rpc/rpc.server.ts",
+      "default": "./rpc/rpc.client.ts"
+    }
+  }
+}
+```
+
+## Usage
+
+Now you can import `#rpc` anywhere and get the right implementation:
+
+### Server Components
+
+```typescript
+// app/users/[id]/page.tsx
+import { rpc } from "#rpc";
+
+export default async function UserPage({ params }: { params: { id: string } }) {
+  // Direct call - no HTTP, runs on server
+  const user = await rpc.users.getUser(Number(params.id));
+
+  return <div>{user.name}</div>;
+}
+```
+
+### Client Components
+
+```tsx
+// components/UserProfile.tsx
+"use client";
+
+import { rpc } from "#rpc";
+import { useEffect, useState } from "react";
+
+export function UserProfile({ userId }: { userId: number }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // HTTP call - runs in browser
+    rpc.users.getUser(userId).then(setUser);
+  }, [userId]);
+
+  return <div>{user?.name}</div>;
+}
+```
+
+**The API is identical** - `rpc.users.getUser(id)` works the same way in both environments. The difference is:
+- Server Components: Direct function call
+- Client Components: HTTP POST to `/api/srpc/users.getUser`
+
+## With Custom Serialization
+
+For complex types (Dates, Maps), use a serializer like `seroval`:
+
+```typescript
+// rpc/rpc.client.ts
+import { createSRPCClient } from "@srpc.org/core/client";
+import * as seroval from "seroval";
+import type { AppRouter } from "@/app/server/router";
+
+export const rpc = createSRPCClient<AppRouter>({
+  endpoint: "/api/srpc",
+  transformer: seroval,
+});
+```
+
+Update the server adapter to use the same serializer:
+
+```typescript
+// app/server/router.ts
+import * as seroval from "seroval";
+
+export const { fetch: handler } = srpcFetchApi({
+  router: appRouter,
+  endpoint: "/api/srpc",
+  transformer: seroval,
+});
+```
+
+## With React Query
+
+See the [React Query guide](/docs/react-query) for integrating with `@tanstack/react-query`.
+
+## How It Works
+
+Node.js [subpath imports](https://nodejs.org/api/packages.html#subpath-imports) let you define conditional exports:
+
+- `react-server`: Used by Next.js Server Components
+- `browser`: Used in the browser (Client Components)
+- `default`: Fallback for other environments
+
+Next.js automatically resolves the correct file based on where the code runs.

@@ -1,0 +1,220 @@
+---
+title: React Query Integration
+description: Use SRPC with React Query for data fetching and caching
+---
+
+The `@srpc.org/react-query` package provides utilities to use SRPC with [TanStack Query](https://tanstack.com/query) (React Query).
+
+## Installation
+
+```bash
+npm install @srpc.org/react-query @tanstack/react-query
+```
+
+## Basic Setup
+
+Transform your SRPC client into React Query-compatible options:
+
+```typescript
+import { createSRPCClient } from "@srpc.org/core/client";
+import { createSRPCQueryOptions } from "@srpc.org/react-query";
+import type { AppRouter } from "./server";
+
+const client = createSRPCClient<AppRouter>({
+  endpoint: "/api",
+});
+
+export const srpc = createSRPCQueryOptions({ client });
+```
+
+## Using with useQuery
+
+Each procedure gets a `.queryOptions()` method that returns React Query options:
+
+```tsx
+import { useQuery } from "@tanstack/react-query";
+import { srpc } from "./rpc";
+
+function UserProfile({ userId }: { userId: number }) {
+  const { data, isLoading, error } = useQuery(
+    srpc.users.getUser.queryOptions(userId)
+  );
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return <div>{data.name}</div>;
+}
+```
+
+## Using with useMutation
+
+Use `.mutationOptions()` for mutations:
+
+```tsx
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { srpc } from "./rpc";
+
+function CreateUserForm() {
+  const queryClient = useQueryClient();
+
+  const createUser = useMutation({
+    ...srpc.users.create.mutationOptions(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+
+  const handleSubmit = (data: { name: string }) => {
+    createUser.mutate(data);
+  };
+
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); handleSubmit({ name: "John" }); }}>
+      <button type="submit" disabled={createUser.isPending}>
+        {createUser.isPending ? "Creating..." : "Create User"}
+      </button>
+    </form>
+  );
+}
+```
+
+## Custom Query Options
+
+Spread the options and add your own:
+
+```tsx
+const { data } = useQuery({
+  ...srpc.users.list.queryOptions(),
+  staleTime: 5 * 60 * 1000, // 5 minutes
+  refetchInterval: 30 * 1000, // Refetch every 30s
+  enabled: isLoggedIn,
+});
+```
+
+## Query Keys
+
+Access query keys for cache invalidation:
+
+```tsx
+const queryClient = useQueryClient();
+
+// Invalidate a specific query
+queryClient.invalidateQueries({
+  queryKey: srpc.users.getUser.queryKey(userId),
+});
+
+// Invalidate all user queries
+queryClient.invalidateQueries({
+  queryKey: ["users"],
+});
+```
+
+## React Context Provider
+
+For apps that need the client available via context:
+
+```tsx
+// rpc/provider.tsx
+import { createSRPCContext } from "@srpc.org/react-query";
+import { createSRPCClient } from "@srpc.org/core/client";
+import type { AppRouter } from "./server";
+
+const client = createSRPCClient<AppRouter>({
+  endpoint: "/api",
+});
+
+export const {
+  SRPCProvider,
+  useSRPC,
+  useSRPCClient,
+} = createSRPCContext<AppRouter>();
+
+// Wrap your app
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SRPCProvider client={client}>
+        {children}
+      </SRPCProvider>
+    </QueryClientProvider>
+  );
+}
+```
+
+Use in components:
+
+```tsx
+function MyComponent() {
+  // Get query options via context
+  const srpc = useSRPC();
+  const { data } = useQuery(srpc.users.getUser.queryOptions(1));
+
+  // Or get the raw client for direct calls
+  const client = useSRPCClient();
+  const handleClick = async () => {
+    const user = await client.users.getUser(1);
+  };
+
+  return <div>{data?.name}</div>;
+}
+```
+
+## Prefetching
+
+Prefetch data in Server Components or loaders:
+
+```tsx
+// app/users/page.tsx (Server Component)
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { srpc } from "./rpc";
+
+export default async function UsersPage() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery(srpc.users.list.queryOptions());
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <UsersList />
+    </HydrationBoundary>
+  );
+}
+```
+
+## With Next.js Package Imports
+
+Combine with the [Next.js package imports pattern](/docs/guides/nextjs):
+
+```typescript
+// rpc/rpc.client.ts
+import { createSRPCClient } from "@srpc.org/core/client";
+import { createSRPCQueryOptions, createSRPCContext } from "@srpc.org/react-query";
+import type { AppRouter } from "@/app/server/router";
+
+export const rpcClient = createSRPCClient<AppRouter>({
+  endpoint: "/api/srpc",
+});
+
+export const srpc = createSRPCQueryOptions({ client: rpcClient });
+
+export const {
+  SRPCProvider,
+  useSRPC,
+  useSRPCClient,
+} = createSRPCContext<AppRouter>();
+```
+
+Now in Client Components:
+
+```tsx
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { srpc } from "#rpc";
+
+export function UserProfile({ userId }: { userId: number }) {
+  const { data } = useQuery(srpc.users.getUser.queryOptions(userId));
+  return <div>{data?.name}</div>;
+}
+```
