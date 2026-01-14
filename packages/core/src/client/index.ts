@@ -33,7 +33,10 @@ import {
   SRPCError,
 } from "../shared";
 import { createRecursiveProxy } from "../shared/proxy";
+import type { SRPCLink } from "./link";
 export * from "../shared";
+export * from "./link";
+export { httpBatchLink, type HttpBatchLinkOptions } from "./httpBatchLink";
 
 /**
  * Configuration options for creating an SRPC client.
@@ -66,6 +69,8 @@ export type SRPCClientOptions = {
   }) => HeadersInit | Promise<HeadersInit>;
   transformer?: Serializer;
   fetch?: typeof fetch;
+  /** Optional link for custom transport (e.g., httpBatchLink) */
+  link?: SRPCLink;
 };
 
 /**
@@ -143,7 +148,16 @@ export const createSRPCClient = <
   headers: getHeaders,
   transformer = defaultSerializer,
   fetch = globalThis.fetch,
+  link,
 }: SRPCClientOptions): DecoratedProcedureRecord<TRoutes> => {
+  // Use custom link if provided
+  if (link) {
+    return createRecursiveProxy<DecoratedProcedureRecord<TRoutes>>(
+      async ({ path, args }) => link({ path, args })
+    );
+  }
+
+  // Default HTTP transport
   return createRecursiveProxy<DecoratedProcedureRecord<TRoutes>>(
     async ({ path, args }) => {
       const headers = await getHeaders?.({ path: path });
