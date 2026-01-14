@@ -1,9 +1,10 @@
 "use client";
+import { type ReactElement } from "react";
 import { useState } from "react";
 import { useSRPC } from "#rpc";
 import { useQuery } from "@tanstack/react-query";
 
-const ClientComponent = () => {
+const ClientComponent = (): ReactElement => {
   const [userId, setUserId] = useState(1);
 
   const srpc = useSRPC();
