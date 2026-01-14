@@ -35,7 +35,7 @@ export const createSrpcServer = <TRouter extends AnySRPC>({
       });
 
       return fetchApi.fetch(request);
-    }
+    },
   );
 
   return createServer(adapter);

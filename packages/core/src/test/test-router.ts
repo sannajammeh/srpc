@@ -1,4 +1,5 @@
 import { initSRPC } from "../server";
+import { SRPCError } from "../shared";
 
 const s = initSRPC();
 
@@ -41,6 +42,9 @@ export const usersRouter = s.router({
 export const appRouterTest = s.router({
   sayHello: async (_, name: string) => {
     return "Hello " + name;
+  },
+  failingProcedure: async () => {
+    throw new SRPCError("This always fails", "BAD_REQUEST");
   },
   users: usersRouter,
 });

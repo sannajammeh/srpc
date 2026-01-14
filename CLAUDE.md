@@ -31,7 +31,22 @@ turbo check-types     # Type check all workspaces
 cd apps/web && pnpm check-types  # Type check web app only
 ```
 
-### Publishing
+### Versioning & Publishing
+```bash
+pnpm changeset              # Create changeset (describe changes)
+pnpm version-packages       # Bump versions based on changesets
+pnpm release-packages       # Build and publish to npm
+```
+
+**Changesets Workflow:**
+1. Make code changes
+2. Run `pnpm changeset` to document changes
+3. Select packages affected (patch/minor/major)
+4. Commit changeset files
+5. PR merged → GitHub Action creates version PR
+6. Merge version PR → Auto-publishes to npm
+
+**Legacy JSR Publishing:**
 ```bash
 cd packages/core && pnpm release         # Test and publish core to JSR
 cd packages/react-query && pnpm release  # Test and publish react-query to JSR
