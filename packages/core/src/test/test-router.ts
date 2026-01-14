@@ -3,6 +3,9 @@ import { SRPCError } from "../shared";
 
 const s = initSRPC();
 
+// Context type for context-aware tests
+export type TestContext = { userId: string };
+
 const user = {
   id: 1,
   name: "John Doe",
@@ -47,3 +50,16 @@ export const appRouterTest = s.router({
 });
 
 export type TestRouter = typeof appRouterTest;
+
+// Context-aware router for testing createContext
+const sCtx = s.context<TestContext>();
+
+export const appRouterWithContext = sCtx.router({
+  sayHello: async (_, name: string) => "Hello " + name,
+  whoami: async (ctx) => ctx.userId,
+  failingProcedure: async () => {
+    throw new SRPCError("This always fails", "BAD_REQUEST");
+  },
+});
+
+export type TestRouterWithContext = typeof appRouterWithContext;

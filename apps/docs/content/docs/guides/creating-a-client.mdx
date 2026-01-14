@@ -1,0 +1,152 @@
+---
+title: Creating a Client
+description: Connect to your SRPC server with full type safety
+---
+
+## Basic Setup
+
+Create a client by importing your router type:
+
+```typescript
+import { createSRPCClient } from "@srpc.org/core/client";
+import type { AppRouter } from "./server";
+
+const client = createSRPCClient<AppRouter>({
+  endpoint: "http://localhost:3000/api",
+});
+```
+
+## Making Calls
+
+Call procedures just like regular functions:
+
+```typescript
+// Simple procedure
+const greeting = await client.sayHello("World");
+
+// Nested router
+const user = await client.users.getUser(1);
+
+// Deeply nested
+const admin = await client.users.admin.createUser({ name: "Jane" });
+```
+
+All calls are fully typed - your IDE will autocomplete procedure names and show argument/return types.
+
+## Custom Headers
+
+Add authentication or custom headers to every request:
+
+```typescript
+const client = createSRPCClient<AppRouter>({
+  endpoint: "/api",
+  headers: async () => ({
+    Authorization: `Bearer ${await getAccessToken()}`,
+  }),
+});
+```
+
+The `headers` function receives the procedure path if you need conditional headers:
+
+```typescript
+const client = createSRPCClient<AppRouter>({
+  endpoint: "/api",
+  headers: async ({ path }) => {
+    if (path.startsWith("admin")) {
+      return { "X-Admin-Token": getAdminToken() };
+    }
+    return {};
+  },
+});
+```
+
+## Custom Serialization
+
+Use a custom serializer for complex types like Dates, Maps, or Sets:
+
+```typescript
+import { createSRPCClient } from "@srpc.org/core/client";
+import * as superjson from "superjson";
+
+const client = createSRPCClient<AppRouter>({
+  endpoint: "/api",
+  transformer: {
+    serialize: (value) => superjson.stringify(value),
+    deserialize: (value) => superjson.parse(value),
+  },
+});
+```
+
+Popular options:
+- [superjson](https://github.com/blitz-js/superjson) - Handles Dates, Maps, Sets, BigInt
+- [seroval](https://github.com/lxsmnsyc/seroval) - Fast serialization with streaming support
+
+## Request Batching
+
+Combine multiple requests into a single HTTP call:
+
+```typescript
+import { createSRPCClient, httpBatchLink } from "@srpc.org/core/client";
+
+const client = createSRPCClient<AppRouter>({
+  endpoint: "/api",
+  link: httpBatchLink({
+    endpoint: "/api",
+    batchWindowMs: 50,  // Collect requests for 50ms
+    maxBatchSize: 10,   // Max 10 requests per batch
+  }),
+});
+
+// These requests batch into a single HTTP call
+const [user1, user2, posts] = await Promise.all([
+  client.users.getUser(1),
+  client.users.getUser(2),
+  client.posts.list(),
+]);
+```
+
+## Error Handling
+
+Catch `SRPCError` for server-side errors:
+
+```typescript
+import { SRPCError } from "@srpc.org/core";
+
+try {
+  await client.users.getUser(999);
+} catch (error) {
+  if (error instanceof SRPCError) {
+    console.log(error.code);    // "NOT_FOUND"
+    console.log(error.message); // "User not found"
+  }
+}
+```
+
+## Custom Fetch
+
+Provide a custom fetch implementation:
+
+```typescript
+const client = createSRPCClient<AppRouter>({
+  endpoint: "/api",
+  fetch: (url, init) => {
+    // Custom logic, logging, etc.
+    return fetch(url, init);
+  },
+});
+```
+
+## Type Utilities
+
+Extract input and output types from your router:
+
+```typescript
+import type { InferRouterInputs, InferRouterOutputs } from "@srpc.org/core";
+
+type Inputs = InferRouterInputs<AppRouter>;
+type Outputs = InferRouterOutputs<AppRouter>;
+
+// Use in your components
+type UserInput = Inputs["users"]["getUser"];  // [id: number]
+type UserOutput = Outputs["users"]["getUser"]; // { id: number, name: string }
+```

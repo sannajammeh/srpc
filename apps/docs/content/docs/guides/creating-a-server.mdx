@@ -1,0 +1,182 @@
+---
+title: Creating a Server
+description: Learn how to define routers and procedures with SRPC
+---
+
+## Basic Setup
+
+Initialize SRPC and create your first router:
+
+```typescript
+import { initSRPC } from "@srpc.org/core/server";
+
+const s = initSRPC();
+
+const appRouter = s.router({
+  sayHello: async (_, name: string) => {
+    return `Hello ${name}!`;
+  },
+});
+
+export type AppRouter = typeof appRouter;
+```
+
+## Procedure Signature
+
+All procedures follow this pattern:
+
+```typescript
+async (context, ...args) => result
+```
+
+- **context**: First parameter, injected by the server (use `_` if unused)
+- **args**: Your procedure's arguments, fully typed
+- **result**: Return value, automatically serialized
+
+## Nested Routers
+
+Organize procedures into logical groups:
+
+```typescript
+const usersRouter = s.router({
+  getUser: async (_, id: number) => {
+    return { id, name: "John", email: "john@example.com" };
+  },
+  list: async () => {
+    return [{ id: 1, name: "John" }];
+  },
+});
+
+const postsRouter = s.router({
+  getPost: async (_, id: number) => {
+    return { id, title: "Hello World" };
+  },
+});
+
+const appRouter = s.router({
+  users: usersRouter,
+  posts: postsRouter,
+});
+
+// Client calls: client.users.getUser(1), client.posts.getPost(1)
+```
+
+## Context
+
+Add typed context for authentication, database connections, etc:
+
+```typescript
+type Context = {
+  userId: string;
+  db: Database;
+};
+
+const s = initSRPC();
+const sCtx = s.context<Context>();
+
+const appRouter = sCtx.router({
+  getCurrentUser: async (ctx) => {
+    return ctx.db.users.findById(ctx.userId);
+  },
+});
+```
+
+## Error Handling
+
+Throw `SRPCError` with appropriate error codes:
+
+```typescript
+import { SRPCError } from "@srpc.org/core";
+
+const appRouter = s.router({
+  getUser: async (_, id: number) => {
+    const user = await db.users.findById(id);
+
+    if (!user) {
+      throw new SRPCError("User not found", "NOT_FOUND");
+    }
+
+    return user;
+  },
+});
+```
+
+Available error codes:
+- `BAD_REQUEST` (400)
+- `UNAUTHORIZED` (401)
+- `FORBIDDEN` (403)
+- `NOT_FOUND` (404)
+- `INTERNAL_SERVER_ERROR` (500)
+
+## Server Adapters
+
+### Fetch API (Edge-compatible)
+
+Works with Cloudflare Workers, Vercel Edge, Deno, Bun:
+
+```typescript
+import { srpcFetchApi } from "@srpc.org/core/server";
+
+const { fetch: handleRequest } = srpcFetchApi({
+  router: appRouter,
+  endpoint: "/api",
+  createContext: async (req) => {
+    const token = req.headers.get("Authorization");
+    return { userId: await validateToken(token) };
+  },
+});
+
+export default { fetch: handleRequest };
+```
+
+### Node.js HTTP Server
+
+Standalone Node.js server:
+
+```typescript
+import { createSrpcServer } from "@srpc.org/core/server";
+
+const server = createSrpcServer({
+  router: appRouter,
+  endpoint: "/api",
+  createContext: async (req) => {
+    const token = req.headers["authorization"];
+    return { userId: await validateToken(token) };
+  },
+});
+
+server.listen(3000);
+```
+
+### Next.js Route Handler
+
+```typescript
+// app/api/[[...srpc]]/route.ts
+import { srpcFetchApi } from "@srpc.org/core/server";
+import { appRouter } from "@/server/router";
+
+const { fetch: handler } = srpcFetchApi({
+  router: appRouter,
+  endpoint: "/api",
+});
+
+export { handler as POST };
+```
+
+## Server-Side Caller
+
+Call procedures directly on the server without HTTP:
+
+```typescript
+import { createSRPCCaller } from "@srpc.org/core/server";
+
+const caller = createSRPCCaller({
+  router: appRouter,
+  createContext: async () => ({
+    userId: await getServerSession(),
+  }),
+});
+
+// Use in Server Components
+const user = await caller.users.getUser(1);
+```

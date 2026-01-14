@@ -48,5 +48,8 @@
     "bunchee": "^6.6.2",
     "get-port-please": "^3.1.2",
     "vitest": "^4.0.10"
+  },
+  "dependencies": {
+    "@whatwg-node/server": "^0.10.18"
   }
 }

@@ -1,0 +1,65 @@
+---
+title: Getting Started
+description: A lightweight, type-safe RPC framework for TypeScript
+---
+
+SRPC is a minimal RPC framework that provides end-to-end type safety between your server and client with zero code generation.
+
+## Features
+
+- **Type-safe**: Full TypeScript inference from server to client
+- **Lightweight**: Minimal dependencies, small bundle size
+- **Nested routers**: Organize procedures into logical groups
+- **Framework agnostic**: Works with any server framework via Fetch API
+- **Batching**: Combine multiple requests into a single HTTP call
+
+## Installation
+
+```bash
+# Core package
+npm install @srpc.org/core
+
+# React Query integration (optional)
+npm install @srpc.org/react-query @tanstack/react-query
+```
+
+## Quick Example
+
+### Define your router on the server
+
+```typescript
+import { initSRPC } from "@srpc.org/core/server";
+
+const s = initSRPC();
+
+const appRouter = s.router({
+  sayHello: async (_, name: string) => `Hello ${name}!`,
+  users: s.router({
+    getUser: async (_, id: number) => ({ id, name: "John" }),
+  }),
+});
+
+export type AppRouter = typeof appRouter;
+```
+
+### Create a client
+
+```typescript
+import { createSRPCClient } from "@srpc.org/core/client";
+import type { AppRouter } from "./server";
+
+const client = createSRPCClient<AppRouter>({
+  endpoint: "http://localhost:3000/api",
+});
+
+// Fully typed!
+const greeting = await client.sayHello("World"); // string
+const user = await client.users.getUser(1); // { id: number, name: string }
+```
+
+## Next Steps
+
+- [Creating a Server](/docs/guides/creating-a-server) - Learn how to define routers and procedures
+- [Creating a Client](/docs/guides/creating-a-client) - Connect to your server with type safety
+- [Next.js Guide](/docs/guides/nextjs) - Use SRPC in Next.js with Server Components
+- [React Query](/docs/react-query) - Integrate with React Query for data fetching
