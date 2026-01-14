@@ -8,8 +8,10 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "@srpc.org/ui",
-    "@srpc.org/typescript-config",
-    "@srpc.org/eslint-config"
+    "@repo/ui",
+    "@repo/typescript-config",
+    "@repo/eslint-config",
+    "docs",
+    "web"
   ]
 }
