@@ -19,7 +19,7 @@
     }
   },
   "dependencies": {
-    "@repo/ui": "workspace:*",
+    "@srpc.internal/ui": "workspace:*",
     "@tanstack/react-query": "^5.90.10",
     "next": "^16.1.1",
     "react": "^19.0.0",
@@ -27,8 +27,8 @@
     "seroval": "^1.1.1"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@srpc.internal/eslint-config": "workspace:*",
+    "@srpc.internal/typescript-config": "workspace:*",
     "@srpc.org/core": "workspace:*",
     "@srpc.org/react-query": "workspace:*",
     "@types/node": "^24.10.1",

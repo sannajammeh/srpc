@@ -8,9 +8,9 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "@repo/ui",
-    "@repo/typescript-config",
-    "@repo/eslint-config",
+    "@srpc.internal/ui",
+    "@srpc.internal/typescript-config",
+    "@srpc.internal/eslint-config",
     "docs",
     "web"
   ]

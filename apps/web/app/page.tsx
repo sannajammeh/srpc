@@ -1,5 +1,5 @@
 import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
+import { Button } from "@srpc.internal/ui/button";
 import ClientComponent from "./ClientComponent";
 import { Suspense } from "react";
 
